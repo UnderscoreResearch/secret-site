@@ -1,0 +1,73 @@
+﻿<div id="key-tab" class="tab hiddentab">
+    <div class="modal fade" id="removeDataModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Remove data access</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Removing the data key will make it impossible for you as the owner of the secret to read or update the data in your secret.</p>
+                    <p>You can still block unlocks and you can also still delete the information to prevent disclosure.</p>
+                    <p>Until you have published your secret you can generate a new data key at any time.</p>
+                    <p class="text-danger">After you publish the secret there is no way to recover the data key if not saved.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn action btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn action btn-danger" id="removeDataAccessConfirm">Remove data access</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section id="secret-key" class="bg-light">
+        <div class="row major-row">
+            <div class="col-md-12 mx-auto text-center">
+                <h1 class="mb-5">Your Shared Secret Key</h1>
+            </div>
+        </div>
+        <div class="row major-row">
+            <div class="col-md-12 mx-auto text-danger text-center no-print">
+                <h2>Make sure you save this someplace safe because</h2>
+                <h2><b>there is no way to recover a lost key</b>!</h2>
+            </div>
+        </div>
+
+        <div class="row major-row">
+            <div class="col-md-10 col-lg-8 mx-auto text-center">
+                <h3>
+                    Use this key to access your information.
+                </h3>
+                <p>
+                    Keep this value someplace safe such as for instance in your password manager.
+                </p>
+                <div id="keyUrlContainer">
+                    <code id="keyDump" class="clickToCopy" data-toggle="tooltip" data-placement="bottom" title="<i class=&quot;far fa-copy&quot;></i> Click to copy"></code>
+                </div>
+            </div>
+        </div>
+
+        <div class="row major-row">
+            <div class="col-md-10 col-lg-8 mx-auto text-center">
+                <p>
+                    The QR code can also be used to access your shared secret at<br />
+                    <a id="keySiteLink" href="https://yoursharedsecret.com/">https://yoursharedsecret.com/</a>.
+                </p>
+                <canvas id="keyQrcode"></canvas>
+                <p id="keyType"></p>
+
+            </div>
+        </div>
+
+        <div class="row major-row no-print">
+            <div class="col">
+                <button type="submit" id="secretKeyBack" class="btn action btn-secondary mx-auto">Back</button>
+            </div>
+            <div class="col text-right">
+                <button type="button" id="removeDataAccess" class="btn action btn-danger mx-auto" data-toggle="modal" data-target="#removeDataModal">Remove data access</button>
+            </div>
+        </div>
+    </section>
+</div>

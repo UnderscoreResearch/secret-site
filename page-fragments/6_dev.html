@@ -1,0 +1,215 @@
+<script type="x-unrendered" id="dev-page-template">
+    <section id="dev" class="dev-section bg-light">
+        <div class="container">
+            <div class="row major-row">
+                <div class="col-lg-12 mx-auto">
+                    <h1>Service design overview</h1>
+                    <p>
+                        Below is a general design diagram describing how the service runs. The overal design tenents are low cost so as to make sure that the service can keep running reliably
+                        for a very long time and simplicity.
+                    </p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12 mx-auto align-items-center">
+                    <img src="img/system.png" class="img-fluid" alt="">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12 mx-auto">
+                    <p>
+                        Everything is currently running in AWS in the us-west-2 region (Oregon). There is also a stripped down version of the API that only allows sending messages
+                        that live in the eu-west-1 region (Ireland) and eu-central-1 (Frankfurt). The secondary regions are there to alleviate the chance that some entity is able to
+                        perform a successful man in the middle attack when sending out invitations.
+                    </p>
+                    <p>
+                        The website is a completely static website hosted in <a href="https://aws.amazon.com/s3/">Amazon S3</a> and served by
+                        <a href="https://aws.amazon.com/cloudfront">Amazon CloudFront</a>.
+                        The deployment is using <a href="https://aws.amazon.com/codepipeline/">AWS CodePipelines</a> deploying code from a
+                        <a href="https://github.com/UnderscoreResearch/secret-site">GitHub repository</a> using
+                        <a href="https://aws.amazon.com/codebuild/">AWS CodeBuild</a> to package the site and run tests created
+                        using the <a href="http://cypress.io">Cypress</a> test framework.
+                    </p>
+                    <p>
+                        The entire storage lalyer is implemented using <a href="https://aws.amazon.com/s3/">Amazon S3</a>.
+                        The API is implemented using <a href="https://aws.amazon.com/api-gateway/">Amazon API Gateway</a> that points to a function running Node.js code in
+                        <a href="https://aws.amazon.com/lambda/">AWS Lambda</a>
+                        The deployment is using <a href="https://aws.amazon.com/codepipeline/">AWS CodePipelines</a> deploying code from a
+                        <a href="https://github.com/UnderscoreResearch/secret-service">GitHub repository</a> using
+                        <a href="https://aws.amazon.com/codebuild/">AWS CodeBuild</a> and deploying the result with
+                        <a href="https://aws.amazon.com/cloudformation/">AWS CloudFormation</a>.
+                    </p>
+                    <p>
+                        There are two external services used by the system and both are related to payment processing. The first is <a href="https://squareup.com/">Square</a>
+                        that is used to process regular payments. The second is <a href="https://www.blockcypher.com/">BlockCypher</a> which is used to verify Bitcoint and Etherium transactions.
+                    </p>
+                    <p>
+                        Decided to just to go all in on the whole AWS experience and most of the code is also developed using <a href="https://aws.amazon.com/cloud9/">AWS Cloud9</a> and
+                        <a href="https://aws.amazon.com/codestar/">AWS CodeStar</a>. The main reason GitHub was used instead of the <a href="https://aws.amazon.com/codecommit/">AWS CodeCommit</a>
+                        was that one requirement was to deploy to several regions from a single GitHub repository.
+                    </p>
+                    <h1>Infrastructure security</h1>
+                    <p>
+                        All accounts related to this service including DNS, other infrastructure and source code have good passwords and second factor authentication set up on them.
+                        AWS best practices are followed including using only temporary credentials for any runtime and all policies are using least required credentials for access
+                        to AWS resources.
+                    </p>
+                    <h1>Logging and monitoring</h1>
+                    <p>
+                        Not included in the diagram but all monitoring, alarming and logs are done in <a href="https://aws.amazon.com/cloudwatch/">Amazon CloudWatch</a>.
+                        No logs are kept for longer than 2 weeks. No access logs are generated for the website and for the API the access logs are logged in the following format.
+                    </p>
+                    <pre><code>{
+  "requestId":"$context.requestId",
+  "requestTime":"$context.requestTime",
+  "httpMethod":"$context.httpMethod",
+  "path":"$context.path",
+  "status":"$context.status",
+  "protocol":"$context.protocol",
+  "responseLength":"$context.responseLength",
+  "latency": "$context.responseLatency"
+}</code></pre>
+                    <p>
+                        Here is an example of what an actual log entry looks like. Specifically note the lack of anything that will identify the source of the call such as source IP.
+                    </p>
+                    <pre><code>{
+  "requestId": "3db3dc78-1fc0-11e9-977b-35adc5555b43",
+  "requestTime": "24/Jan/2019:10:10:14 +0000",
+  "httpMethod": "GET",
+  "path": "/v1/payments/BEouq2oaSv_q1SiXku_7FYT99TWUax4PuejWJ31C9vobfAXDmKNzMugJXfIgRCyuqQlffhLRlLfzUHhYyj-94p0",
+  "status": "200",
+  "protocol": "HTTP/1.1",
+  "responseLength": "1818",
+  "latency": "137"
+}</code></pre>
+                    <h1>Specific encryption specifications</h1>
+                    <p>
+                        Here are the detailed encryption specifications used by this system.
+                    </p>
+                    <h2>Symmetric Encryption</h2>
+                    <p>
+                        Anything that is said to be encrypted with symmetric encryption is encrypted using <a href="https://en.wikipedia.org/wiki/Salsa20">xsalsa20</a>-<a href="https://en.wikipedia.org/wiki/Poly1305">poly1305</a>.
+                    </p>
+                    <p>
+                        Any key will always be 32 bytes long (256 bits).
+                    </p>
+                    <h2>Public key signing</h2>
+                    <p>
+                        Anything signed with a private key uses <a href="https://en.wikipedia.org/wiki/EdDSA#Ed25519">Edwards-curve Digital Signature Algorithm (EdDSA)</a> with the Ed25519 curve.
+                    </p>
+                    <p>
+                        Any public keys will always be 32 bytes long. Any private keys will be 64 (512 bits) bytes long although the last 32 bytes are a copy of the public key. These are the keys that are generated and given to both secret owners and caretakers.
+                    </p>
+                    <p>
+                        The fingerprint of the caretaker is simply the hex of the first 8 bytes of the public key.
+                    </p>
+                    <h2>Public key encryption</h2>
+                    <p>
+                        Anything encrypted with a private key uses <a href="https://en.wikipedia.org/wiki/Curve25519">x25519</a>-<a href="https://en.wikipedia.org/wiki/Salsa20">xsalsa20</a>-<a href="https://en.wikipedia.org/wiki/Poly1305">poly1305</a>.
+                        An ephemeral private key is generated and its public key is stored with the data. This ephemeral key is used with the
+                        public key related to the private key used for decryption to generate a derived key through a <a href="https://en.wikipedia.org/wiki/Elliptic-curve_Diffie%E2%80%93Hellman">Elliptic-curve Diffie–Hellman</a> key exchange.
+                    </p>
+                    <p>
+                        The private and public keys used for encryption are directly derived from the private and public keys used for signing. It is important to note that it has not been proven that this does not weaken the use of these keys (Although it has not been shown that it does either).
+                    </p>
+                    <h2>Shared Secret Encryption</h2>
+                    <p>
+                        The shared secret crypto uses <a href="https://en.wikipedia.org/wiki/Shamir%27s_Secret_Sharing">Shamir's Secret Sharing algorithm</a>.
+                        The actual encryption key is 256 bits long. It is encrypted using a Galois field of 8 bits (Since we only need 15 keys this is more than sufficient).
+                    </p>
+                    <h2>Secure Data Format</h2>
+                    <p>
+                        All secure data is stored in a binary format that is the same regardless of if it encrypted with a private key, a symmetric key or a derived shared key. The format always include a signature and has an option of also including plain text data that is only signed if so desired.
+                    </p>
+                    <ul>
+                        <li><code>version</code> - Version marker, this is currently always 0x01 (1 byte).</li>
+                        <li><code>nonceSize</code> - Size of nonce used for the encryption. If the message is in clear text the nonceSize is 0 otherwise it is the number of bytes of the nonce (1 byte). This value is always either 0 or 24.</li>
+                        <li><code>nonce</code> - Nonce used to seed the stream cypher used for encryption (nonceSize bytes).</li>
+                        <li><code>publicKeySize</code> - The size of the public key data for an ephemeral private key used to encrypt (1 byte). This value is always either 0 or 32.</li>
+                        <li><code>publicKey</code> - The public key of the private key used for an ephemeral <a href="https://en.wikipedia.org/wiki/Elliptic-curve_Diffie%E2%80%93Hellman">Elliptic-curve Diffie–Hellman</a> key exchange when encrypting the data (publicKeySize bytes).</li>
+                        <li><code>signatureSize</code> - The size of the signature data (1 byte). This value currently always 32.</li>
+                        <li><code>signature</code> - The signature of the data as generated using the <a href="https://en.wikipedia.org/wiki/EdDSA#Ed25519">EdDSA</a> algorithm (signatureSize bytes).</li>
+                        <li><code>message</code> - The actual encrypted or clear text message (Rest of bytes). If encrypted this will contain an additional 16 byte MAC in the beginning before the cypher text used to authenticate the key used.</li>
+                    </ul>
+                    <h2>Format of keys for end users</h2>
+                    <p>
+                        The keys always take the form of a link that will launch the service loading the corresponding keys so they start with <code>https://yoursharedsecret.com/#</code>.
+                        Notice that the secret piece of the URL is always in a place holder so it is never sent to the server. After this can come several fields that are separated by a <code>/</code>
+                        character.
+                    </p>
+                    <ul>
+                        <li><code>s=</code> Secret identifier.</li>
+                        <li><code>p=</code> Private key. Encoded using Base64 URL safe encoding.</li>
+                        <li><code>c=</code> Caretaker identifier.</li>
+                        <li><code>d=</code> Data decryption key. Encoded using Base64 URL safe encoding. Only included if the secret owner has opted to have the ability to change and read his own secret after publishing.</li>
+                        <li><code>a=</code> Address of recipient. Encoded using Base64 URL safe encoding. Only included in invite links.</li>
+                        <li><code>t=</code> Title of secret. Encoded using Base64 URL safe encoding. Only included in invite links.</li>
+                        <li><code>u=</code> Public key of secret. Encoded using Base64 URL safe encoding. Only included in invite links.</li>
+                    </ul>
+                    <h2>Data blob format</h2>
+                    <p>
+                        The decrypted contents of the secrets data blob is simply a ZIP file. The custom document is stored as a file called ".delta" in the format of
+                        <a href="https://quilljs.com/docs/delta/">Quill Delta</a>. All other files are in the ZIP file with their original file names.
+                    </p>
+                    <h2>
+                        The caretaker and unlock data blob format
+                    </h2>
+                    <p>The contains a JSON stringified object with the following properties.</p>
+                    <ul>
+                        <li><code>bits</code> - Number of bits to use for the Galois field for the keys as a number. Currently this is always going to be 8.</li>
+                        <li><code>required</code> - Number of key parts required to reconstruct the secret as a number.</li>
+                        <li><code>x</code> - The x value of the secret share as a number.</li>
+                        <li><code>y</code> - The y value of the secret share as a Base64 URL safe encoded binary.</li>
+                        <li>
+                            <code>keys</code> - Map of address decryption keys. This field is only set for caretakers who are allowed to unlock a secret.
+                            The key is the caretaker ID and the value is the encryption key for the caretaker (Same key as is gotten by doing the
+                            <a href="https://en.wikipedia.org/wiki/Elliptic-curve_Diffie%E2%80%93Hellman">Elliptic-curve Diffie–Hellman</a>
+                            between the caretaker and secret keys for each individual caretaker). The encryption keys are encoded using Base64 URL safe encoding.
+                        </li>
+                    </ul>
+                    <p>
+                        This JSON object is then stringified and padded to the maximum allowable field size before it is encrypted using caretakers public key and signed with the secrets public key.
+                        During unlocking the exact same processes is used to create the unlockData field except this is encrypted using the unlocking caretakers public key and signed by the caretaker.
+                    </p>
+                    <h1>Service API Reference</h1>
+                    <p>
+                        Below is an interactive detailed reference of the entire API.
+                        This is generated dynamically by reading the swagger definition of the API.
+                    </p>
+                    <h2>
+                        Request signing
+                    </h2>
+                    <p>
+                        When signing request you will perform the following steps.
+                    </p>
+                    <ul>
+                        <li>Get the current time in milliseconds since 1970-01-01 UTC. This is the <code>timestamp</code>.</li>
+                        <li>
+                            Concatenate the verb of the request in uppercase. The timestamp from the previous step and the entire URL of the request
+                            after the base URL of the API (Please note this does not include the <code>/v1</code> part of the URL.
+                            Generate an SHA 256 digest from the string above (UTF-8 encoding). This is the <code>digest</code>.
+                        </li>
+                        <li>Sign the <code>digest</code> using the private key for either the secret or the caretaker. This is the <code>signature</code>.</li>
+                        <li>
+                            Create a JSON object with two fields <code>t</code> with the <code>timestamp</code> (Must be a string), and the second field
+                            <code>s</code> with the <code>signature</code> encoded using Base64 URL safe encoding. Called the <code>auth objecct</code>.
+                        </li>
+                        <li>Stringify the <code>auth object</code> and encode it using Base64 URL safe encoding. Called the <code>auth string</code>.</li>
+                        <li>Assign the header <code>x-yoursharedsecret-ownership</code> with the <code>auth string</code>.</li>
+                    </ul>
+                    <p>
+                        If your machines clock is off by more than 1 minute you will not be able to sign requests as the signature requires that the time of the
+                        timestamp is close to the actual time on the service. To protect the usage from drift you can find the time as known by the service
+                        by calling the <a href="https://api.yoursharedsecret.com/v1/servicetime">service time</a> API and calculate an offset from your own
+                        local time.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <hr />
+        <div id="swagger">
+        </div>
+    </section>
+</script>
+<div id="dev-page" class="hiddenpage nonnavpage">
+</div>

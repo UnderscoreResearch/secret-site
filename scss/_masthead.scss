@@ -1,0 +1,160 @@
+.masthead,.loading-masthead {
+    position: relative;
+    width: 100%;
+    height: auto;
+    min-height: 35rem;
+    padding: 15rem 0;
+
+    h1, h3 {
+        font-family: 'Varela Round';
+        padding-bottom: 1rem;
+        letter-spacing: 0.3rem;
+        background: -webkit-linear-gradient(fade-out(white, 0.1), fade-out(white, 1));
+        -webkit-text-fill-color: transparent;
+        -webkit-background-clip: text;
+    }
+
+    h1 {
+        font-size: 2.0rem;
+    }
+
+    h3 {
+        font-size: 0.7rem;
+        display: none;
+    }
+
+    .front-video {
+        width: 288px;
+        height: 162px;
+        margin: 0 auto;
+    }
+
+    .video-container {
+        padding-bottom: 1rem;
+    }
+
+    h2 {
+        max-width: 20rem;
+        font-size: 1rem;
+    }
+
+    @media(min-width: 360px) {
+        .front-video {
+            width: 320px;
+            height: 180px;
+        }
+    }
+
+    @media(min-width: 580px) {
+        .front-video {
+            width: 480px;
+            height: 270px;
+        }
+
+        h3 {
+            display: block;
+        }
+    }
+
+    @media(min-width: 768px) {
+        h1 {
+            font-size: 2rem;
+        }
+
+        .front-video {
+            width: 640px;
+            height: 360px;
+        }
+
+        h3 {
+            font-size: 1rem;
+            padding-bottom: 2rem;
+        }
+    }
+
+    @media(min-width: 992px) {
+        height: 100vh;
+        padding: 0;
+
+        .front-video {
+            width: 880px;
+            height: 495px;
+        }
+
+        h1 {
+            font-size: 4.0rem;
+        }
+
+        h2 {
+            max-width: 30rem;
+            font-size: 1.25rem;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            padding-bottom: 3rem;
+        }
+    }
+}
+
+.masthead {
+    background: linear-gradient(to bottom, #{fade-out($black, .9)} 0%,#{fade-out($black, .5)} 75%,$black 100%), url('../img/bg-masthead.jpg');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+    background-size: cover;
+}
+
+.loading-masthead {
+    background: linear-gradient(to bottom, $black 0%,#{fade-out($black, .5)} 75%, #{fade-out($black, .9)} 100%);
+
+    @keyframes elipsis2anim {
+        0% {
+            opacity: 0;
+        }
+
+        33% {
+            opacity: 0;
+        }
+
+        34% {
+            opacity: 1;
+        }
+
+        100% {
+            opacity: 1;
+        }
+    }
+
+    @keyframes elipsis3anim {
+        0% {
+            visibility: hidden;
+        }
+
+        66% {
+            opacity: 0;
+        }
+
+        67% {
+            opacity: 1;
+        }
+
+        100% {
+            opacity: 1;
+        }
+    }
+
+    #elipsis2 {
+        opacity: 0;
+        animation-name: elipsis2anim;
+        animation-duration: 3s;
+        animation-iteration-count: infinite;
+    }
+
+    #elipsis3 {
+        opacity: 0;
+        animation-name: elipsis3anim;
+        animation-duration: 3s;
+        animation-iteration-count: infinite;
+    }
+}

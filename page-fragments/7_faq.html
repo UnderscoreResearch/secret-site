@@ -1,0 +1,135 @@
+<script type="x-unrendered" id="faq-page-template">
+    <section id="description" class="description-section bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 mx-auto">
+                    <h1>Frequently Asked Questions</h1>
+                    <h2>
+                        Why not provide a way of resetting a lost password?
+                    </h2>
+                    <p>
+                        To be able the reset or change a password the service would inherently need to be able to know what the encryption keys are and then optionally based on the password provide access to them. I do not trust (And based on past performance neither should most other services) that I would be able to create service that is safe to data loss.
+                    </p>
+                    <p>
+                        However by creating the service in such a way that nothing confidential is ever retained by the service there is nothing that can be accidentally disclosed by a successful intrusion by a malicious attacker.
+                    </p>
+                    <h2>
+                        What is our privacy policy?
+                    </h2>
+                    <p>
+                        This site will never have any ads or third party references or links. This site does not use cookies except when paying with a credit card in which case a connection is established from your browser to the payment processor to collect payment information and they may be setting cookies. These cookies are not used by this site directly.
+                    </p>
+                    <p>
+                         Whenever possible, personal information will never even be known to the site. In the case that any personal data is known it will only be used for the explicitly stated purpose and never shared with any third party except when required to do so by a legally binding order.
+                    </p>
+                    <p>
+                        This service will not retain any logs except what is needed for troubleshooting purposes. For more information on what are in the logs see the detailed
+                        section under the <a class="js-scroll-trigger" href="#dev">Architecture section</a>.
+                    </p>
+                    <p>
+                        When an information submission is deleted there is no information retained by the service of either the information or the caretakers of it although the payment information
+                        might still be retained for book keeping and potential future refund purposes.
+                    </p>
+                    <h2>
+                        What happens after a year as my payment expire?
+                    </h2>
+                    <p>
+                        Your data is not immediately deleted, however after some time the information will become inaccessible unless you pay for an additional year and will eventually be deleted and unrecoverable.
+                    </p>
+                    <h2>
+                        What is your refund policy?
+                    </h2>
+                    <p>
+                        Simply email <a href="support@yoursharedsecret.com">support@yoursharedsecret.com</a> and explain why you are unhappy with our service
+                        and we will be happy to refund your purchase.
+                    </p>
+                    <h2>
+                        What does the service actually know about your secret?
+                    </h2>
+                    <p>
+                        In the case of a legally binding order to hand over all information what information does the service have to disclose?
+                    </p>
+                    <p>
+                        The service has the entire submitted secret encrypted using either public key encryption or symmetric encryption with a 256 bit key. It does not at any point have the key required to decrypt this data.
+                    </p>
+                    <p>
+                        The service has all addresses to the caretakers encrypted using a symmetric 256 bit key based encryption. It does not at any point have the decryption keys required decrypt this information. The exception to this is that the addresses are submitted when a message is actually sent if the service is used for sending those messages.
+                         However this data is not retained in any way. The other exception to this is if you have opted to have service based notification of unlocks in which case the email address of the creator is saved unencrypted with the secret.
+                         If this option is not specified the only way the service would be able to find a specific secret is by its 16 byte long secret identifier.
+                    </p>
+                    <p>
+                        The key used for decrypting the secret is never stored in the service except as the shared secrets encrypted using the individual caretakers public keys (The corresponding private keys are never known to the service).
+                    </p>
+                    <p>
+                        The individual caretaker unlock keys are stored with the service encrypted using the public key of each caretaker. The corresponding private key is never known to the service.
+                    </p>
+                    <p>
+                        The service does know how many caretakers are available for unlocking the secret. However it does not know how many are required to completely retrieve the key. This information is encrypted as part of the keys.
+                    </p>
+                    <p>
+                        During an unlock each submitted unlock key is encrypted using the public key of the caretaker requesting the unlock. The corresponding private key is never known to the service.
+                    </p>
+                    <p>
+                        The service has the double SHA-256 hashes of both the secret unlock key and the double SHA-256 hashes of the keys for encrypting each individual caretakers addresses. During the sending of a message or the retrieval of the secret the single SHA-256 hash of the corresponding keys are submitted to the service.
+                    </p>
+                    <h2>
+                        How can you in good conscience provide a service whose contents you can not access under any circumstances?
+                    </h2>
+                    <p>
+                        The way a service like this could operate comes down to two different modes.
+                    </p>
+                    <p>
+                        The first is that you implicitly trust the operator of the service to both keep your information safe and to diligent fight for your privacy. This would require a major corporation that both has the resources required to safeguard such an obvious target and the resources to fight for you with governments to safeguard your privacy. Even in those cases that trust is usually misplaced as seen with the close to daily data breaches occuring all over the internet.
+                    </p>
+                    <p>
+                        The other way of operating a service like this is to simply have nothing that could be misplaced. This requires you as the customer not to have any trust in the creator and operator of the service. It also makes the site a non attractive target for hackers because there really is nothing here to steal.
+                        Even if the entire respository of secrets were made available publicly the only feature of this site that would be compromised is the 1 week quarantine on unlocking information.
+                    </p>
+                    <p>
+                        Finally several intentional decisions were made during the design of how this site operates to make it a very bad communication channel. These include the requirement to have at least 3 recipients of any message, the mandatory 1 week quarantine upon unlocking the service and finally it is really expensive as a commpunication channel costing $1 per message. Another reason is that any key generated with the service will be long and complicated enough
+                        that a user would most likely need to store it somewhere since it cannot be remember. This means that there is a way of accessing the information, it just isn't going through the service itself.
+                    </p>
+                    <h2>
+                        Are there any known vulnerabilities?
+                    </h2>
+                    <p>
+                        Yes, there are several minor vulnerabilities currently known.
+                    </p>
+                    <h3>
+                        Man in the middle
+                    </h3>
+                    <p>
+                        There is a possible man in the middle attack possible during the invitation phase of the secret creation where if another entity manages to intercept the invitation email it can be accepted by somebody else than the intended recipients. This is why you are encouraged to contact your secret caretakers out of band (Give them a call for instance) and validate their public key finger print to protect against this vulnerability.
+                    </p>
+                    <p>
+                        If you wish to be really paranoid you can print out the caretaker invitations locally and hand deliver them to your intended recipients.
+                    </p>
+                    <p>
+                        Another remediation for this problem is that when using the service for sending notifications it will send them from at least three different regions in the world hopefully making it harder for a single entity to intercept all the messages.
+                    </p>
+                    <h3>
+                        Denial of service
+                    </h3>
+                    <p>
+                        If somebody were to get to the service and delete the files that store the secret or recipients the secret would no longer be retrievable. This is partially on purpose since if there were
+                        additional backups those could also be used to retrieve deleted secrets. With the current design once a secret is deleted from the service it is irretrievably gone.
+                    </p>
+                    <h3>
+                        Quantum Computing
+                    </h3>
+                    <p>
+                        The elliptic curve encryption algorithms used for public key encryption and signing used by this service are not considered safe from advances in Quantum computing.
+                    </p>
+                    <h2>
+                        Where is this service operating from?
+                    </h2>
+                    <p>
+                        The company is based in and operated from Long Beach, California, USA. The actual service is hosted in AWS mainly in the us-west-2 region (Portland).
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+</script>
+<div id="faq-page" class="hiddenpage nonnavpage">
+</div>

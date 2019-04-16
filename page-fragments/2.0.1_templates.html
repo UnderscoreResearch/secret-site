@@ -1,0 +1,74 @@
+﻿<script id="editCaretakerTemplate" type="x-tmpl-mustache">
+    <form style="display: none" data-itemid="{{caretakerId}}" class="secretCaretakerRow">
+        <div class="form-row{{^isMail}} align-items-center{{/isMail}}">
+            <div class="col-md-2">
+                <label class="d-md-none"><b>Type</b></label>
+                <select class="form-control caretakerAddressType"{{#fingerprint}} disabled{{/fingerprint}}>
+                    <option value="EMAIL"{{^isMail}} selected{{/isMail}}>Email</option>
+                    <option value="MAIL"{{#isMail}} selected{{/isMail}}>Mail</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="d-md-none"><b>Address</b></label>
+                <div class="input-group">
+                    <input type="email" value="{{^isMail}}{{address}}{{/isMail}}" class="form-control caretakerAddress" placeholder="name@example.com"{{#fingerprint}} disabled{{/fingerprint}}{{#isMail}} style="display:none;"{{/isMail}}>
+                    <textarea class="form-control caretakerAddressMail"{{#fingerprint}} disabled{{/fingerprint}}{{^isMail}} style="display:none;"{{/isMail}}>{{#isMail}}{{address}}{{/isMail}}</textarea>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-check form-check-inline" data-toggle="tooltip" data-placement="bottom" title="Allowed to initiate unlock">
+                    <input class="form-check-input caretakerUnlock" type="checkbox" value="" {{#unlock}} checked{{/unlock}}{{#isReadOnly}} disabled{{/isReadOnly}}>
+                    <span class="d-none d-md-block">Allow</span>
+                    <span class="d-md-none">Allow Unlock</span>
+
+                    <i class="d-md-none fas fa-info-circle" data-toggle="tooltip" data-placement="bottom" title="Should this caretaker be allowed to initiate an unlock request of the information?"></i>
+                 </div>
+            </div>
+            <div class="col-md-2">
+                <span class="d-md-none"><b>Status</b></span>
+                <span class="caretakerStatus">{{status}}</span>
+            </div>
+            <div class="col-md-2">
+                {{#fingerprint}}
+                <span class="d-md-none"><b>Fingerprint</b> <i class="fas fa-info-circle" data-toggle="tooltip" data-placement="bottom" title="Use to protected against man in the middle attack. Contact your caretaker through another means and verify their fingerprint after they have accepted your invitation."></i></span>
+                <code class="caretakerFingerprint">{{fingerprint}}</code>
+                {{/fingerprint}}
+                {{^isReadOnly}}<button type="button" class="close caretakerDelete" aria-label="Remove caretaker">&nbsp;<span aria-hidden="true" data-toggle="tooltip" data-placement="bottom" title="Remove caretaker">&times;</span></button>{{/isReadOnly}}
+                {{#canInvite}}<button type="button" class="close caretakerResend" aria-label="Resend invite"><i class="fas fa-redo" data-toggle="tooltip" data-placement="bottom" title="Resend invite"></i>&nbsp;</button>{{/canInvite}}
+            </div>
+        </div>
+        <hr class="d-md-none" />
+    </form>
+</script>
+<script id="caretakerTemplate" type="x-tmpl-mustache">
+    <form data-itemid="{{caretakerId}}" class="caretakerRow">
+        <div class="form-row{{^isMail}} align-items-center{{/isMail}}">
+            <div class="col-md-2">
+                <label class="d-md-none"><b>Type</b></label>
+                <span class="caretakerAddressType">{{^isMail}}Email{{/isMail}}{{#isMail}}Mail{{/isMail}}</span>
+            </div>
+            <div class="{{#allowShare}}col-md-6{{/allowShare}}{{^allowShare}}col-md-8{{/allowShare}}">
+                <label class="d-md-none"><b>Address</b></label>
+                <span class="caretakerAddress">{{{addressFormatted}}}</span>
+            </div>
+            {{#allowShare}}
+            <div class="col-md-2">
+                <div class="form-check form-check-inline" data-toggle="tooltip" data-placement="bottom" title="Grant access to read submitted information">
+                    <input class="form-check-input caretakerShare" type="checkbox" value=""{{#hasDataKey}} checked disabled{{/hasDataKey}}>
+                    <span class="d-none d-md-block">Allow access</span>
+                    <span class="d-md-none">Allow access</span>
+
+                    <i class="d-md-none fas fa-info-circle" data-toggle="tooltip" data-placement="bottom" title="Should this caretaker be allowed to access information?"></i>
+                 </div>
+            </div>
+            {{/allowShare}}
+            <div class="col-md-2">
+                <span class="d-md-none"><b>Status</b></span>
+                <span class="caretakerStatus">{{status}}</span>
+                {{^hasUnlockData}}<button type="button" class="close caretakerResend" aria-label="Resend invite"><i class="fas fa-redo" data-toggle="tooltip" data-placement="bottom" title="Resend request"></i>&nbsp;</button>{{/hasUnlockData}}
+                {{#hasUnlockData}}{{#hasDataKey}}<button type="button" class="close caretakerResend" aria-label="Resend invite"><i class="fas fa-redo" data-toggle="tooltip" data-placement="bottom" title="Resend share"></i>&nbsp;</button>{{/hasDataKey}}{{/hasUnlockData}}
+            </div>
+        </div>
+        <hr class="d-md-none" />
+    </form>
+</script>

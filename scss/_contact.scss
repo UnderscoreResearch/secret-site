@@ -1,0 +1,35 @@
+.contact-section {
+    padding: 1rem 0;
+    background: linear-gradient(to bottom, #{fade-out($black, .9)} 0%,#{fade-out($black, .5)} 75%,$black 100%), url('../img/bg-signup.jpg');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+    background-size: cover;
+
+    .social {
+        margin-top: 2rem;
+
+        a {
+            text-align: center;
+            height: 6rem;
+            width: 6rem;
+            font-size: 3rem;
+            background: fade-out($white, 0.7);
+            border-radius: 100%;
+            line-height: 6rem;
+            color: fade-out($white, 0.2);
+
+            &:hover {
+                color: fade-out($white, 0.5);
+            }
+
+            &:active {
+                color: $white;
+            }
+        }
+    }
+
+    .copyright {
+        padding-top: 0rem
+    }
+}

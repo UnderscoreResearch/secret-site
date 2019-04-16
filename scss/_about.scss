@@ -1,0 +1,29 @@
+.about-section {
+    padding-top: 4rem;
+    background: linear-gradient(to bottom, $black 0%,#{fade-out($black, .1)} 75%,#{fade-out($black, .2)} 100%);
+
+    h3 {
+        font-family: 'Varela Round';
+        font-size: 0.7rem;
+        line-height: 2.0rem;
+        letter-spacing: 0.3rem;
+        padding-bottom: 1rem;
+        color: white;
+    }
+
+    p {
+        margin-bottom: 1.5rem;
+        margin-top: 1.5rem;
+    }
+
+    @media(min-width: 580px) {
+        .front-video {
+            width: 480px;
+            height: 270px;
+        }
+
+        h3 {
+            display: none;
+        }
+    }
+}

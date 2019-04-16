@@ -1,0 +1,162 @@
+<script type="x-unrendered" id="secure-page-template">
+    <section id="description" class="description-section bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 mx-auto">
+                    <h1>How is it secure?</h1>
+                    <p>
+                        In short this is secure because at no point during the interaction with the central service are the encryption keys transmitted over the internet. In fact at no point during your interaction with the service does it ever posses the keys to access anything confidential including the addresses of the secret caretakers with two small exception.
+                    </p>
+                    <ul>
+                        <li>
+                            If you chose to use service based unlock notifications the service does know the address to send this notification to.
+                        </li>
+                        <li>
+                            When sending any kind of email notifications the addresses of the recipients of the messages will be sent to the service when the notification is sent. However this information is not logged, nor is it then stored by the service for later retrieval.
+                        </li>
+                    </ul>
+                    <h2>
+                        Why should I trust that this is what actually happens?
+                    </h2>
+                    <p>
+                        The public API and implementation of the service and front end is entirely open source. Furthermore since all the secrets are supposed to never leave the front end this is the only piece that you really have to trust. Because of this work has been made to make it relatively trivial to download and run your own front end from the GitHub repository in case you do not trust what is actually running on the website is in fact what is published in the repository.
+                    </p>
+                    <h2>
+                        How can this possibly be true?
+                    </h2>
+                    <p>
+                        From now on the discussion will be relatively technical and will require some knowledge of <a href="https://en.wikipedia.org/wiki/SHA-2">one way hashing</a>,
+                        <a href="https://en.wikipedia.org/wiki/Advanced_Encryption_Standard">symmetric encryption</a>,
+                        <a href="https://en.wikipedia.org/wiki/Integrated_Encryption_Scheme">public key cryptography</a> and
+                        <a href="https://en.wikipedia.org/wiki/Elliptic_Curve_Digital_Signature_Algorithm">signing</a>,
+                        <a href="https://en.wikipedia.org/wiki/Shamir%27s_Secret_Sharing">secret sharing algorithms</a> and
+                        <a href="https://en.wikipedia.org/wiki/Elliptic-curve_Diffie%E2%80%93Hellman">Diffie-Hellman key exchange</a>.
+                        If you are interested in learning about these topics I can highly recommend the book
+                        <a href="https://www.schneier.com/books/applied_cryptography/">Applied Cryptography by Bruce Schneier</a>.
+                    </p>
+                    <p>
+                        So lets start going through how a secret gets created, published and retrieved. Lets start with a small sequence diagram showing the general flow of information.
+                    </p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12 mx-auto align-items-center">
+                    <img src="img/howsecret.png" class="img-fluid" alt="">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12 mx-auto">
+                    <h3>
+                        Submitting information
+                    </h3>
+                    <p>
+                        When an information disclosure is created a private key for the information is created on the client of the creator. All public key encryption uses a 512 bit long private key using Elliptic Curve Cryptography. The information is then encrypted and signed in the client before it is sent to the service. At this point the actual information can be included or not. If it is included it will be encrypted using the private key for the whole information disclosure.
+                    </p>
+                    <h3>
+                        Sending out invitations to caretakers
+                    </h3>
+                    <p>
+                        At this point you will create caretakers for your information. You can have up to 15 trusted caretakers. The caretaker will be emailed a message with a link that allows them to accept the invitation which is required before the information is published.
+                    </p>
+                    <h3>
+                        Accepting the caretaker role
+                    </h3>
+                    <p>
+                        When a caretaker accepts the invitation a new 512 bit private key is generated on the client side in the caretakers browser. The public key of this private key is sent to the service along with an address that is encrypted using a symmetrical encryption. The key for address encryption is derived from the Diffie-Hellman key exchange using the two keys from the caretaker and the secret. Please note that this key is never transmitted to the service but is known by both the creator of the secret and the caretaker (Given that they each know a private key).
+                    </p>
+                    <p>
+                        Also included to the service is the double SHA-512 hash of this encryption key. The reason for this is that to initiate an unlocking of a secret the unlocking caretaker need to demonstrate that all recipient keys are known by submitting a list of their single SHA-512 hashes of the same keys.
+                    </p>
+                    <h3>
+                        Publishing the information
+                    </h3>
+                    <p>
+                        Once the publisher of the information is satisfied that enough caretakers have accept the invitations the information can now be published. Before the information is published it is encrypted using the private key of the creator.
+                    </p>
+                    <p>
+                        Once the information is published a new key 256 bit symmetric encryption key is used to encrypt the information. This key is then split into the number of keys required, one for each caretaker, using
+                        <a href="https://en.wikipedia.org/wiki/Shamir%27s_Secret_Sharing">Shamir's Secret Sharing algorithm</a>.
+                        At this point you also need to specify how many keys are required in tandem to unlock and retrieve the information.
+                    </p>
+                    <p>
+                        The data to be published to the secret is then encrypted using symmetrical encryption with the key generated above as the encryption key. If you opt to not be able to update the information, there is no way to retrieve the published information by the creator of the information after it is published. If you chose to keep being able to update the secret publish operation can be done as many times as needed to update the caretaker list after publishing.
+                        The service will also contain a double SHA-512 has of the encryption key that will later be used to demonstrate knowledge of the original key during retrieval of the unlocked information.
+                    </p>
+                    <p>
+                        Each one of the generated keys is then written to a caretaker encrypted using the public key of the caretaker as published to the service when they accepted the invitation. The publisher of the information also has the option to chose which of the caretakers should be able to initiate unlocking the secret. If a caretaker has been designated such, the keys for decrypting the addresses of all the caretakers is also saved encrypted using the same public key of the caretaker.
+                    </p>
+                    <p>
+                        All calls during this phase must be authenticated using the private key of the creator.
+                    </p>
+                    <h3>
+                        Unlocking the information
+                    </h3>
+                    <p>
+                        When a caretaker decides that an unlocking of the information is warranted a call is made to the service authenticated using the private key of the caretaker generated during the accept phase where the caretaker includes an SHA-512 has of all the encryption keys for the addresses of all the other caretakers addresses. These are then hashed again on the service side and compared against the double hashes saved per caretaker as part of accepting the invitation.
+                    </p>
+                    <p>
+                        If correct it will optionally send out an unlock notification to the informations creator. Once this has been sent out the creator has 7 days to either block the unlock or delete the entire information submission if they so chose before the unlocking caretaker can actually access the information.
+                    </p>
+                    <p>
+                        Immediately when the unlock has been accepted the caretaker can query the addresses of all the other caretakers and the address keys are available they can be decrypted and an email can be sent out requesting that the other caretakers will start submitting their part of the unlocking keys.
+                    </p>
+                    <h3>
+                        Submitting caretaker keys
+                    </h3>
+                    <p>
+                        When an unlock request has been initiated all caretakers will be messaged and requested to submit their keys. At this point they will need to log in authenticated using their private key from the accept phase to retrieve their part of the shared secret. This is then decrypted using their private key on the client side and re-encrypted using the public key of the caretaker requesting the unlock and saved back to the service for each caretaker.
+                    </p>
+                    <h2>
+                        Retrieval of information
+                    </h2>
+                    <p>
+                        Once sufficient caretakers have submitted their part of the key to reconstitute the entire symmetric encryption key and at least 7 days has passed since the unlock was initiated the caretaker can make a request to the service requesting to read the secret by authenticating using their private key and also including an SHA-512 digest of the decryption key.
+                    </p>
+                    <p>
+                        If the service can validate all this data it will return the information including the data to the unlocking caretaker which can then proceed to decrypt the data within.
+                    </p>
+                    <h2>
+                        Sharing access to the information
+                    </h2>
+                    <p>
+                        If the unlocking caretaker of the information so choses they can once the information of the secret is unlocked decide to reshare access to any of the participating caretakers. Once this is done he submits a request to share the information which includes a map which contains an entry for every caretaker that that should also be able to access the information as the key. The value of this map is the symmetric encryption key of the information
+                        encrypted using the public key of each caretaker. A notification is then sent out to the caretakers notifying them that they now have access to the information as well. It is worth noting that the information is still signed by the original private key of the creator so by doing this all shared to caretakers are still able to validate that the information has not been tampered with. 
+                    </p>
+                    <h2>
+                        Authentication
+                    </h2>
+                    <p>
+                        All calls except for the original creation of the submission is authenticated using the same authentication scheme which includes adding a header called <code>x-yoursharedsecret-ownership</code>. The value of this header must include the current timestamp and a signature concatenating this timestamp, the method called and the path portion of the URL. The timestamp has to be within 1 minute of now to protect from replay attacks. For details see the API documentation.
+                    </p>
+                    <h2>
+                        Signing
+                    </h2>
+                    <p>
+                        To ensure data integrity most things on top of being encrypted are also signed. All signatures use the <a href="https://en.wikipedia.org/wiki/EdDSA#Ed25519">Edwards-curve Digital Signature Algorithm</a>. Everything secret related needs to be signed by the private key of the secret. The addresses need to be signed using the private key of the caretaker owning them if that exists or the secret key if one does not exist. The caretaker unlock secret data need to be signed by the caretaker that re-encrypted it.
+                    </p>
+                    <h2>
+                        Changing caretaker address
+                    </h2>
+                    <p>
+                        Given the long term nature of a service like this there is a very distinct chance that people might during a secrets lifetime change addresses. Because of this at any time a caretaker can make a request authenticated with their private key and update, add and remove addresses attached to them. The addresses are still encrypted using the same key from the original key exchange since this key is also distributed to all caretakers that have unlocking privileges it can not be changed.
+                    </p>
+                    <h2>
+                        Isn't JavaScript inherently insecure?
+                    </h2>
+                    <p>
+                        While this is true. This service does assume that you do not have malicious things in your browser or computer. The service does try its best to protect you from bad things happening inside of the JavaScript container. Specifically the site will never have adds or in any way consume any packages coming from any third party vendors. This is also easily verifiable by anybody using the networking developer tab and notice that the site does not fetch anything from any server except
+                        <a href="https://yoursharedsecret.com">https://yoursharedsecret.com</a> or <a href="https://api.yoursharedsecret.com/">https://api*.yoursharedsecret.com/</a>.
+                    </p>
+                    <p>
+                        The one exception to third party API:s is the use of the payment processor API. However care has been taken to only load this code into the service when it is actually needed which is when information is first submitted. If you are worried about this please use either Bitcoin or Etherium to pay for the service which even though it is a call to an outside service it is a simple REST call in the back end and not downloading any code from a remote service. Another alternative is to create the information submission first without actually entering any information and pay for it and then after you have restarted your browser you can open up the information submission that is now already paid for and submit the actual confidential information.
+                    </p>
+                    <p>
+                        The front end is also implemented as a static single page application so there are no requests going back and forth between the browser and service containing any state. The only communication after fetching the code of the single page is the explicit calls being made to the API, again with the exception of making payments with credit cards.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+</script>
+<div id="secure-page" class="hiddenpage nonnavpage">
+</div>

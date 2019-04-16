@@ -1,0 +1,120 @@
+<script id="inviteMailTemplate" type="x-tmpl-mustache">
+<div align="center" style="page-break-after: always;">
+    <div>
+        <div style="border: 2px dashed #bbb; border-radius: 5px; display: inline-block; right: 0px; float: right; text-align:justify;">
+            <div style="padding: 1rem;">
+                {{{address}}}
+            </div>
+        </div>
+    </div>
+    <div style="padding: 1rem; clear: both;">
+        {{#title}}
+        <h2>{{title}}</h2>
+        {{/title}}
+        <h3>You are invited to be a caretaker of information on <br/><a href="{{baseurl}}">Your Shared Secret ({{baseurl}})</a></h3>
+    </div>
+    {{#message}}
+    <div style="border: 2px dashed #bbb; border-radius: 5px; text-align: justify;">
+        <div style="padding: 1rem;">
+            {{{message}}}
+        </div>
+    </div>
+    {{/message}}
+    <div style="padding: 1rem; left: 0px; text-align: justify;">
+        If you chose to participate you will be given a portion of a key that which can be used to retrieve the information when necessary.
+    </div>
+    <div>
+        <img src="{{qrcode}}">
+        <p style="color: #888"><small>Scan QR code or follow the link<br/><a style="color: #88f" href="{{url}}">{{{displayUrl}}}</a></small></p>
+    </div>
+    <div style="padding: 1rem; left: 0px; text-align: justify;">
+        If you want to know more about what this is please go to the about section at <a href="{{baseurl}}#about">{{baseurl}}#about</a>. For more information on how it works visit the usage section at <a href="{{baseurl}}#how">{{baseurl}}#how</a>
+        on the same site.
+    </div>
+</div>
+</script>
+
+<script id="unlockMailTemplate" type="x-tmpl-mustache">
+<div align="center" style="page-break-after: always;">
+    <div>
+        <div style="border: 2px dashed #bbb; border-radius: 5px; display: inline-block; right: 0px; float: right; text-align:justify;">
+            <div style="padding: 1rem;">
+                {{{address}}}
+            </div>
+        </div>
+    </div>
+    <div style="padding: 1rem; clear: both;">
+        {{#title}}
+        <h2>{{title}}</h2>
+        {{/title}}
+        <h3>You are requested to submit your part of the key to unlocking information on<br/><a href="{{baseurl}}">Your Shared Secret ({{baseurl}})</a></h3>
+    </div>
+    {{#message}}
+    <div style="border: 2px dashed #bbb; border-radius: 5px; text-align: justify;">
+        <div style="padding: 1rem;">
+            {{{message}}}
+        </div>
+    </div>
+    {{/message}}
+    <div style="padding: 1rem; left: 0px; text-align: justify;">
+        <p>
+            You previously chose to participate as a caretaker of informtion and a request has now been made to unlock this information.
+        </p>
+        <p>
+            If you agree with this request you need to follow the link below, enter the private key that you received when you agreed to participate and then choose the <b>Contribute Key</b> button.
+        </p>
+    </div>
+    <div>
+        <img src="{{qrcode}}">
+        <p style="color: #888"><small>Scan QR code or follow the link<br/><a style="color: #88f" href="{{url}}">{{url}}</a></small></p>
+    </div>
+    <div style="padding: 1rem; left: 0px; text-align: justify;">
+        If you want to know more about what this is please go to the about section at <a href="{{baseurl}}#about">{{baseurl}}#about</a>. For more information on how it works visit the usage section at <a href="{{baseurl}}#how">{{baseurl}}#how</a>
+        on the same site.
+    </div>
+</div>
+</script>
+
+<script id="shareMailTemplate" type="x-tmpl-mustache">
+<div align="center" style="page-break-after: always;">
+    <div>
+        <div style="border: 2px dashed #bbb; border-radius: 5px; display: inline-block; right: 0px; float: right; text-align:justify;">
+            <div style="padding: 1rem;">
+                {{{address}}}
+            </div>
+        </div>
+    </div>
+    <div style="padding: 1rem; clear: both;">
+        {{#title}}
+        <h2>{{title}}</h2>
+        {{/title}}
+        <h3>You have been given access to access information on <br/><a href="{{baseurl}}">Your Shared Secret ({{baseurl}})</a></h3>
+    </div>
+    {{#message}}
+    <div style="border: 2px dashed #bbb; border-radius: 5px; text-align: justify;">
+        <div style="padding: 1rem;">
+            {{{message}}}
+        </div>
+    </div>
+    {{/message}}
+    <div style="padding: 1rem; left: 0px; text-align: justify;">
+        <p>
+            You previously chose to participate as a caretaker of informtion. This
+            information has now been unlocked and you have been granted access to read
+            the information using your account.
+        </p>
+        <p>
+            In order to access the original information submitted follow the link below and
+            enter your private key.
+        </p>
+    </div>
+    <div>
+        <img src="{{qrcode}}">
+        <p style="color: #888"><small>Scan QR code or follow the link<br/><a style="color: #88f" href="{{url}}">{{url}}</a></small></p>
+    </div>
+    <div style="padding: 1rem; left: 0px; text-align: justify;">
+        If you want to know more about what this is please go to the about section at <a href="{{baseurl}}#about">{{baseurl}}#about</a>. For more information on how it works visit the usage section at <a href="{{baseurl}}#how">{{baseurl}}#how</a>
+        on the same site.
+    </div>
+</div>
+</script>

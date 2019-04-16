@@ -1,0 +1,90 @@
+<script type="x-unrendered" id="how-page-template">
+    <section id="description" class="description-section bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 mx-auto">
+                    <h1>
+                        How does it work?
+                    </h1>
+                    <p>
+                        The general sequence of publishing information is described in the diagram below.
+                    </p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12 mx-auto align-items-center">
+                    <img src="img/whatdoesthisdo.png" class="img-fluid" alt="">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12 mx-auto">
+                    <h2>
+                        Submit information and add caretakers
+                    </h2>
+                    <p>
+                        First you enter your secret information and add your designated caretakers of the information. You have the option of using this service for sending out the invitations using email, or if you are very careful you print out an invitation and send it using non digital means.
+                    </p>
+                    <p>
+                        At this point you will be given a secret key. It is paramount that you save this key securely for managing your secret. There is no way of retrieving a lost key, you will need to recreate your information to manage it if lost. You will also lose the ability of deleting the submitted information and blocking the unlocking of a information if you lose your key.
+                        When saving your key you have the option of if you wish it to contain your secret data key as well. Keeping the data key allows you to edit the published information and modifying the list of caretakers after the information has been published, however it does provide a single point of failure if lost. If you chose not to retain the data key you will not even
+                        be able to access your own submitted information after it has been published.
+                    </p>
+                    <h2>
+                        Accepting invitation
+                    </h2>
+                    <p>
+                        Next step is that each of your caretakers accept your invitation.
+                    </p>
+                    <p>
+                        At this point each caretaker will also have a key generated that will allow them to both initiating an unlock of the secret, change their address and submitting their part of the shared key for unlocking a secret to another caretaker. It is paramount that the caretakers also save their key securily. There is no way of retrieving a lost key either which means that a key is lost the information might no longer be unlocked if not enough parts of the shared key are available anymore. As the owner of the secret you are able to add and remove caretakers though as long as you chose to keep your data key.
+                    </p>
+                    <h2>
+                        Publish information
+                    </h2>
+                    <p>
+                        Once a minimum of 3 caretakers have accepted the invitation you can publish the information. You have the option to chose who of your accepted caretakers should be able to initiate an unlock request and how many caretakers should be required to participate in an unlock request before the information can be retrieved.
+                    </p>
+                    <p>
+                        The invitation phase has a man in the middle attack possibility. If somebody manages to intercept the invitation they can assume the role of that caretaker. If you are worried about this possibility make sure you contact each caretaker out of band (For instance give them a call) and verify the fingerprint associated with their acceptance.
+                    </p>
+                    <p>
+                        You will also be presented with the option of how you wish to be notified about an unlock request. You can either have the service notify you directly which does mean that the service will have to tie your email address to the secret. The other alternative is to have the unlocking caretaker send this notification, this however comes with the possibility that a malicious caretaker could opt to not send out this notification to you.
+                    </p>
+                    <p>
+                        If you chose to not retain the data key when saving your key you will be presented with a final chance to show the data key when publishing the secret. This will be your last chance to retrieve this key.
+                    </p>
+                    <h2>
+                        Unlocking the information
+                    </h2>
+                    <p>
+                        Once one of the caretakers decide that it is time to unlock the information they can log in using their private key and issue an unlock request. At this point a notification will be sent to the creator of the information and a one week quarantine period is started. The information can not be retrieved even if the correct unlock key has been successfully assembled until this week is up.
+                    </p>
+                    <p>
+                        If the creator of the information disagree with the request to unlock the information they can either decide to cancel the unlock request but going on the site and cancelling the unlock request using their private key, or they can delete the information all together assuming that it has not yet been retrieved.
+                    </p>
+                    <h2>
+                        Submitting share of key
+                    </h2>
+                    <p>
+                        Each of the accepted caretakers will also receive a notification that a request has been made to unlock the information. If they agree with this decision they can submit their part of the unlock key to the requesting caretaker each using their own private keys.
+                    </p>
+                    <h2>
+                        Retrieve information
+                    </h2>
+                    <p>
+                        If after one week and the entire unlock and decryption key has been retrieved, the caretaker requesting the unlock can finally retrieve and decrypt the information using their private key.
+                    </p>
+                    <h2>
+                        Sharing access
+                    </h2>
+                    <p>
+                        Once the unlocking caretaker has access to the information they have an option to also share the information with other caretakers of the information at their discretion. One advantage with this is that the information can not in any way be tampered with by the unlocking caretaker and all the caretakers that the information is shared with will know that it was the original information as submitted by the
+                        creator of the information as this is validated through the informations signature.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+</script>
+<div id="how-page" class="hiddenpage nonnavpage">
+</div>

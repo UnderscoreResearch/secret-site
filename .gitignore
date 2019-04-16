@@ -1,0 +1,12 @@
+node_modules
+.sass-cache
+bower_components
+css
+dist
+js/*.min.js
+vendor
+*.iml
+.idea
+cypress/videos
+cypress/screenshots
+js/endpointparser.js

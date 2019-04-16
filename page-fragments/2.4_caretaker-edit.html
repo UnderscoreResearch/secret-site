@@ -1,0 +1,135 @@
+﻿<div id="caretaker-edit-tab" class="hiddentab tab">
+    <section id="caretaker-edit" class="bg-light">
+        <div class="row major-row">
+            <div class="col-md-12 mx-auto text-center">
+                <div class="dropdown-container" id="caretakerMenu">
+                    <div class="dropdown show dropdown-right">
+                        <a class="btn secret-dropdown btn-secondary dropdown-toggle" href="#" role="button" id="caretakerEditMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-bars"></i>
+                        </a>
+
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="caretakerEditMenuLink">
+                            <a class="dropdown-item showKey">Show key</a>
+                            <a class="dropdown-item" id="caretakerSendAll">Resend all</a>
+                            <a class="dropdown-item" id="caretakerOverride">Unlock override</a>
+                        </div>
+                    </div>
+                </div>
+                <h2 id="caretakerTitle"/>
+            </div>
+        </div>
+        <div id="caretakerFingerprintContainer" class="hidden">
+            <div class="no-print">
+                <div class="row">
+                    <div class="col-md-12 mx-auto text-center">
+                        <b>Fingerprint</b> <code id="caretakerFingerprint"></code>  <i class="fas fa-info-circle" data-toggle="tooltip" data-placement="bottom" title="Used to protected against man in the middle attack. You might be contacted some other way than the original invitation to validate this by the publisher of the information."></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row major-row no-print">
+            <div class="col-md-12 mx-auto">
+                <p>
+                    Address where you will be notified if anybody attempts to unlock this information.
+                </p>
+
+                <input id="caretakerNotification" type="email"  class="form-control" placeholder="name@example.com" maxlength="200">
+                <textarea class="form-control" id="caretakerNotificationMail" style="height: 6rem"></textarea>
+            </div>
+        </div>
+        <div class="row major-row no-print">
+            <div class="col-md-12 mx-auto">
+                <p>How you prefer to receive the notification?</p>
+                <form>
+                    <div class="form-group">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="notificationType" id="caretakerEmail" value="true" checked>
+                            <label class="form-check-label" for="caretakerEmail">
+                                Email.
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="notificationType" id="caretakerMail" value="true">
+                            <label class="form-check-label" for="caretakerMail">
+                                Regular mail.
+                            </label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div id="caretakerListContainer" class="hidden">
+            <div class="no-print">
+                <div class="row major-row">
+                    <div class="col-md-12 mx-auto text-center">
+                        <h2>Other Caretakers</h2>
+                    </div>
+                </div>
+                <div class="form-row align-items-center" id="caretakerListHeader">
+                    <div class="col-md-2 d-none d-md-block">
+                        <b>Type</b>
+                    </div>
+                    <div class="col-md-8 d-none d-md-block">
+                        <b>Address</b>
+                    </div>
+                    <div class="col-md-2 d-none d-md-block">
+                        <b>Status</b>
+                    </div>
+                </div>
+                <div class="form-row align-items-center" id="caretakerListHeaderShare">
+                    <div class="col-md-2 d-none d-md-block">
+                        <b>Type</b>
+                    </div>
+                    <div class="col-md-6 d-none d-md-block">
+                        <b>Address</b>
+                    </div>
+                    <div class="col-md-2 d-none d-md-block">
+                        <b>Share</b>
+                    </div>
+                    <div class="col-md-2 d-none d-md-block">
+                        <b>Status</b>
+                    </div>
+                </div>
+                <div id="caretakerList">
+                </div>
+            </div>
+        </div>
+        <div id="caretakerContents" class="hidden">
+            <div class="row major-row">
+                <div class="col-md-12 mx-auto text-center text-sm">
+                    <h2>Contents</h2>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 mx-auto text-center">
+                    <div class="mb-5">
+                        <div id="caretakerEditor" style="min-height: 300px; border: 1px solid #212529">
+                        </div>
+                    </div>
+                    <div class="mb-5">
+                        <div id="caretakerFileContainer">
+                            <p id="dropLabel">Attached files</p>
+                            <div class="list-group" id="caretakerFileList"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 mx-auto text-right" style="margin-top: -2rem">
+                    <small>
+                        Contents verified by original signature.
+                    </small>
+                </div>
+            </div>
+        </div>
+        <div class="row major-row no-print">
+            <div class="col">
+                <button type="submit" id="caretakerExit" class="btn action btn-danger mx-auto">Exit</button>
+            </div>
+            <div class="col text-right">
+                <button type="submit" id="caretakerNext" class="btn action btn-primary mx-auto" disabled>Update</button>
+            </div>
+        </div>
+    </section>
+</div>
