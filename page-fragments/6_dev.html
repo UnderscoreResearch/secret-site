@@ -5,8 +5,8 @@
                 <div class="col-lg-12 mx-auto">
                     <h1>Service design overview</h1>
                     <p>
-                        Below is a general design diagram describing how the service runs. The overal design tenents are low cost so as to make sure that the service can keep running reliably
-                        for a very long time and simplicity.
+                        Below is a general design diagram describing how the service runs. The overall design tenants are low cost to make sure that the
+                        service can keep running reliably for a very long time and simplicity.
                     </p>
                 </div>
             </div>
@@ -18,9 +18,9 @@
             <div class="row">
                 <div class="col-lg-12 mx-auto">
                     <p>
-                        Everything is currently running in AWS in the us-west-2 region (Oregon). There is also a stripped down version of the API that only allows sending messages
-                        that live in the eu-west-1 region (Ireland) and eu-central-1 (Frankfurt). The secondary regions are there to alleviate the chance that some entity is able to
-                        perform a successful man in the middle attack when sending out invitations.
+                        Everything is currently running in AWS in the us-west-2 region (Oregon). There is also a stripped-down version of the API that only
+                        allows sending messages that operate in the eu-west-1 region (Ireland) and eu-central-1 (Frankfurt). The secondary regions are there
+                        to alleviate the chance that some entity can perform a successful man in the middle attack when sending out invitations.
                     </p>
                     <p>
                         The website is a completely static website hosted in <a href="https://aws.amazon.com/s3/">Amazon S3</a> and served by
@@ -31,7 +31,7 @@
                         using the <a href="http://cypress.io">Cypress</a> test framework.
                     </p>
                     <p>
-                        The entire storage lalyer is implemented using <a href="https://aws.amazon.com/s3/">Amazon S3</a>.
+                        The entire storage layer is implemented using <a href="https://aws.amazon.com/s3/">Amazon S3</a>.
                         The API is implemented using <a href="https://aws.amazon.com/api-gateway/">Amazon API Gateway</a> that points to a function running Node.js code in
                         <a href="https://aws.amazon.com/lambda/">AWS Lambda</a>
                         The deployment is using <a href="https://aws.amazon.com/codepipeline/">AWS CodePipelines</a> deploying code from a
@@ -41,7 +41,8 @@
                     </p>
                     <p>
                         There are two external services used by the system and both are related to payment processing. The first is <a href="https://squareup.com/">Square</a>
-                        that is used to process regular payments. The second is <a href="https://www.blockcypher.com/">BlockCypher</a> which is used to verify Bitcoint and Etherium transactions.
+                        that is used to process regular payments. The second is <a href="https://www.blockcypher.com/">BlockCypher</a> which is used to verify Bitcoin
+                         and Ethereum transactions.
                     </p>
                     <p>
                         Decided to just to go all in on the whole AWS experience and most of the code is also developed using <a href="https://aws.amazon.com/cloud9/">AWS Cloud9</a> and
@@ -70,7 +71,8 @@
   "latency": "$context.responseLatency"
 }</code></pre>
                     <p>
-                        Here is an example of what an actual log entry looks like. Specifically note the lack of anything that will identify the source of the call such as source IP.
+                        Here is an example of what an actual log entry looks like. Specifically note the lack of anything that will identify the source of the
+                        call such as source IP.
                     </p>
                     <pre><code>{
   "requestId": "3db3dc78-1fc0-11e9-977b-35adc5555b43",
@@ -88,29 +90,34 @@
                     </p>
                     <h2>Symmetric Encryption</h2>
                     <p>
-                        Anything that is said to be encrypted with symmetric encryption is encrypted using <a href="https://en.wikipedia.org/wiki/Salsa20">xsalsa20</a>-<a href="https://en.wikipedia.org/wiki/Poly1305">poly1305</a>.
+                        Anything that is said to be encrypted with symmetric encryption is encrypted using <a href="https://en.wikipedia.org/wiki/Salsa20">xsalsa20</a>-
+                        <a href="https://en.wikipedia.org/wiki/Poly1305">poly1305</a>.
                     </p>
                     <p>
                         Any key will always be 32 bytes long (256 bits).
                     </p>
                     <h2>Public key signing</h2>
                     <p>
-                        Anything signed with a private key uses <a href="https://en.wikipedia.org/wiki/EdDSA#Ed25519">Edwards-curve Digital Signature Algorithm (EdDSA)</a> with the Ed25519 curve.
+                        Anything signed with a private key uses <a href="https://en.wikipedia.org/wiki/EdDSA#Ed25519">Edwards-curve Digital Signature Algorithm (EdDSA)</a>
+                        with the Ed25519 curve.
                     </p>
                     <p>
-                        Any public keys will always be 32 bytes long. Any private keys will be 64 (512 bits) bytes long although the last 32 bytes are a copy of the public key. These are the keys that are generated and given to both secret owners and caretakers.
+                        Any public keys will always be 32 bytes long. Any private keys will be 64 (512 bits) bytes long although the last 32 bytes are a copy of the
+                        public key. These are the keys that are generated and given to both secret owners and caretakers.
                     </p>
                     <p>
                         The fingerprint of the caretaker is simply the hex of the first 8 bytes of the public key.
                     </p>
                     <h2>Public key encryption</h2>
                     <p>
-                        Anything encrypted with a private key uses <a href="https://en.wikipedia.org/wiki/Curve25519">x25519</a>-<a href="https://en.wikipedia.org/wiki/Salsa20">xsalsa20</a>-<a href="https://en.wikipedia.org/wiki/Poly1305">poly1305</a>.
-                        An ephemeral private key is generated and its public key is stored with the data. This ephemeral key is used with the
-                        public key related to the private key used for decryption to generate a derived key through a <a href="https://en.wikipedia.org/wiki/Elliptic-curve_Diffie%E2%80%93Hellman">Elliptic-curve Diffie–Hellman</a> key exchange.
+                        Anything encrypted with a private key uses <a href="https://en.wikipedia.org/wiki/Curve25519">x25519</a>-<a href="https://en.wikipedia.org/wiki/Salsa20">xsalsa20</a>-
+                        <a href="https://en.wikipedia.org/wiki/Poly1305">poly1305</a>. An ephemeral private key is generated, and its public key is stored with the
+                        data. This ephemeral key is used with the public key related to the private key used for decryption to generate a derived key through a
+                        <a href="https://en.wikipedia.org/wiki/Elliptic-curve_Diffie%E2%80%93Hellman">Elliptic-curve Diffie–Hellman</a> key exchange.
                     </p>
                     <p>
-                        The private and public keys used for encryption are directly derived from the private and public keys used for signing. It is important to note that it has not been proven that this does not weaken the use of these keys (Although it has not been shown that it does either).
+                        The private and public keys used for encryption are directly derived from the private and public keys used for signing. It is important to
+                        note that it has not been proven that this does not weaken the use of these keys (Although it has not been shown that it does either).
                     </p>
                     <h2>Shared Secret Encryption</h2>
                     <p>
@@ -119,37 +126,44 @@
                     </p>
                     <h2>Secure Data Format</h2>
                     <p>
-                        All secure data is stored in a binary format that is the same regardless of if it encrypted with a private key, a symmetric key or a derived shared key. The format always include a signature and has an option of also including plain text data that is only signed if so desired.
+                        All secure data is stored in a binary format that is the same regardless of if it encrypted with a private key, a symmetric key or a derived
+                        shared key. The format always includes a signature and has an option of also including plain text data that is only signed if so desired.
                     </p>
                     <ul>
                         <li><code>version</code> - Version marker, this is currently always 0x01 (1 byte).</li>
-                        <li><code>nonceSize</code> - Size of nonce used for the encryption. If the message is in clear text the nonceSize is 0 otherwise it is the number of bytes of the nonce (1 byte). This value is always either 0 or 24.</li>
+                        <li><code>nonceSize</code> - Size of nonce used for the encryption. If the message is in clear text the nonceSize is 0 otherwise it is the
+                            number of bytes of the nonce (1 byte). This value is always either 0 or 24.</li>
                         <li><code>nonce</code> - Nonce used to seed the stream cypher used for encryption (nonceSize bytes).</li>
-                        <li><code>publicKeySize</code> - The size of the public key data for an ephemeral private key used to encrypt (1 byte). This value is always either 0 or 32.</li>
-                        <li><code>publicKey</code> - The public key of the private key used for an ephemeral <a href="https://en.wikipedia.org/wiki/Elliptic-curve_Diffie%E2%80%93Hellman">Elliptic-curve Diffie–Hellman</a> key exchange when encrypting the data (publicKeySize bytes).</li>
+                        <li><code>publicKeySize</code> - The size of the public key data for an ephemeral private key used to encrypt (1 byte). This value is
+                            always either 0 or 32.</li>
+                        <li><code>publicKey</code> - The public key of the private key used for an ephemeral
+                            <a href="https://en.wikipedia.org/wiki/Elliptic-curve_Diffie%E2%80%93Hellman">Elliptic-curve Diffie–Hellman</a> key exchange when
+                            encrypting the data (publicKeySize bytes).</li>
                         <li><code>signatureSize</code> - The size of the signature data (1 byte). This value currently always 32.</li>
-                        <li><code>signature</code> - The signature of the data as generated using the <a href="https://en.wikipedia.org/wiki/EdDSA#Ed25519">EdDSA</a> algorithm (signatureSize bytes).</li>
-                        <li><code>message</code> - The actual encrypted or clear text message (Rest of bytes). If encrypted this will contain an additional 16 byte MAC in the beginning before the cypher text used to authenticate the key used.</li>
+                        <li><code>signature</code> - The signature of the data as generated using the <a href="https://en.wikipedia.org/wiki/EdDSA#Ed25519">EdDSA</a>
+                            algorithm (signatureSize bytes).</li>
+                        <li><code>message</code> - The actual encrypted or clear text message (Rest of bytes). If encrypted this will contain an additional
+                            16-byte MAC in the beginning before the cypher text used to authenticate the key used.</li>
                     </ul>
                     <h2>Format of keys for end users</h2>
                     <p>
-                        The keys always take the form of a link that will launch the service loading the corresponding keys so they start with <code>https://yoursharedsecret.com/#</code>.
-                        Notice that the secret piece of the URL is always in a place holder so it is never sent to the server. After this can come several fields that are separated by a <code>/</code>
-                        character.
+                        The keys take the form of several separate pieces separated by a <code>/</code> character. Each piece start with a single character
+                        identifier and a <code>=</code> character.
                     </p>
                     <ul>
                         <li><code>s=</code> Secret identifier.</li>
                         <li><code>p=</code> Private key. Encoded using Base64 URL safe encoding.</li>
                         <li><code>c=</code> Caretaker identifier.</li>
-                        <li><code>d=</code> Data decryption key. Encoded using Base64 URL safe encoding. Only included if the secret owner has opted to have the ability to change and read his own secret after publishing.</li>
+                        <li><code>d=</code> Data decryption key. Encoded using Base64 URL safe encoding. Only included if the secret owner has opted to have
+                            the ability to change and read his own secret after publishing.</li>
                         <li><code>a=</code> Address of recipient. Encoded using Base64 URL safe encoding. Only included in invite links.</li>
                         <li><code>t=</code> Title of secret. Encoded using Base64 URL safe encoding. Only included in invite links.</li>
                         <li><code>u=</code> Public key of secret. Encoded using Base64 URL safe encoding. Only included in invite links.</li>
                     </ul>
                     <h2>Data blob format</h2>
                     <p>
-                        The decrypted contents of the secrets data blob is simply a ZIP file. The custom document is stored as a file called ".delta" in the format of
-                        <a href="https://quilljs.com/docs/delta/">Quill Delta</a>. All other files are in the ZIP file with their original file names.
+                        The decrypted contents of the secrets data blob is simply a ZIP file. The custom document is stored as a file called ".delta" in the
+                        format of <a href="https://quilljs.com/docs/delta/">Quill Delta</a>. All other files are in the ZIP file with their original file names.
                     </p>
                     <h2>
                         The caretaker and unlock data blob format
@@ -161,15 +175,16 @@
                         <li><code>x</code> - The x value of the secret share as a number.</li>
                         <li><code>y</code> - The y value of the secret share as a Base64 URL safe encoded binary.</li>
                         <li>
-                            <code>keys</code> - Map of address decryption keys. This field is only set for caretakers who are allowed to unlock a secret.
+                            <code>keys</code> - Map of address decryption keys. This field is only set for caretakers who can unlock a secret.
                             The key is the caretaker ID and the value is the encryption key for the caretaker (Same key as is gotten by doing the
                             <a href="https://en.wikipedia.org/wiki/Elliptic-curve_Diffie%E2%80%93Hellman">Elliptic-curve Diffie–Hellman</a>
                             between the caretaker and secret keys for each individual caretaker). The encryption keys are encoded using Base64 URL safe encoding.
                         </li>
                     </ul>
                     <p>
-                        This JSON object is then stringified and padded to the maximum allowable field size before it is encrypted using caretakers public key and signed with the secrets public key.
-                        During unlocking the exact same processes is used to create the unlockData field except this is encrypted using the unlocking caretakers public key and signed by the caretaker.
+                        This JSON object is then stringified and padded to the maximum allowable field size before it is encrypted using caretakers public key
+                        and signed with the secrets public key. During unlocking the exact same processes is used to create the <code>unlockData</code> field
+                        except this is encrypted using the unlocking caretakers public key and signed by the caretaker.
                     </p>
                     <h1>Service API Reference</h1>
                     <p>
@@ -192,7 +207,7 @@
                         <li>Sign the <code>digest</code> using the private key for either the secret or the caretaker. This is the <code>signature</code>.</li>
                         <li>
                             Create a JSON object with two fields <code>t</code> with the <code>timestamp</code> (Must be a string), and the second field
-                            <code>s</code> with the <code>signature</code> encoded using Base64 URL safe encoding. Called the <code>auth objecct</code>.
+                            <code>s</code> with the <code>signature</code> encoded using Base64 URL safe encoding. Called the <code>auth object</code>.
                         </li>
                         <li>Stringify the <code>auth object</code> and encode it using Base64 URL safe encoding. Called the <code>auth string</code>.</li>
                         <li>Assign the header <code>x-yoursharedsecret-ownership</code> with the <code>auth string</code>.</li>

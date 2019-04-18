@@ -496,7 +496,7 @@ describe('End to end', function() {
                         timeout: 10000
                     }).should('not.be.visible');
 
-                    cy.wait(500);
+                    cy.wait(5000);
                     cy.get("#caretakerExit").click();
 
                     cy.wait(500);
