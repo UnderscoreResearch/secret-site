@@ -131,3 +131,19 @@ html, body {
     background: $primary;
     cursor: pointer;
 }
+
+.nonCritialSendInfo, #sendRecipientList {
+    display: none;
+}
+
+@media(min-height: 800px) {
+    .nonCritialSendInfo {
+        display: block;
+    }
+}
+
+@media(min-height: 1000px) {
+    #sendRecipientList {
+        display: block;
+    }
+}

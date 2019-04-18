@@ -160,7 +160,9 @@ function showDialog(title, type, caretakers, sendCallback, doneCallback) {
         });
 
         Promise.all(promises)
-            .then(() => doneCallback())
+            .then(() => {
+                return doneCallback()
+            })
             .then(() => {
                 common.hideProcessing();
                 jQuery("#sendMessageModal").modal("hide");

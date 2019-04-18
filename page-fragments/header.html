@@ -13,6 +13,9 @@
     <!-- Custom styles for this template -->
     <link href="bundle.css" rel="stylesheet">
     <script>
+        if (window.location.hostname == "www.yoursharedsecret.com") {
+            window.location.href = window.location.href.replace("www.yoursharedsecret.com", "yoursharedsecret.com");
+        }
         var pageLoadTimestamp = Date.now();
     </script>
 </head>

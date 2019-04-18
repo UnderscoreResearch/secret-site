@@ -205,8 +205,6 @@ function shareSecret(secretId, caretakerId, sharedKeys) {
         type: "post",
         url: "/secrets/" + secretId + "/" + caretakerId + "/share",
         data: { sharedDataKeys: sharedKeys }
-    }).then((data) => {
-        return data;
     });
 }
 

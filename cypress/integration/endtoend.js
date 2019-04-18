@@ -582,7 +582,7 @@ describe('End to end', function() {
                     // Cancel the unlock
 
                     cy.get('#secretEditNext', {
-                        timeout: 5000
+                        timeout: 10000
                     }).should('have.text', "Cancel Unlock").click();
 
                     cy.get("#busyProcessing", {
@@ -594,12 +594,12 @@ describe('End to end', function() {
 
                     // Validate that first caretaker no longer has access
 
-                    cy.wait(500);
+                    cy.wait(2000);
                     cy.get("#privateKey").type(caretakerKeys[0])
                     cy.get("#showKeyButton").click()
 
                     cy.get("#caretakerEditor", {
-                        timeout: 5000
+                        timeout: 10000
                     }).should("not.be.visible");
                     cy.get("#caretakerNext").should("have.text", "Unlock");
 
