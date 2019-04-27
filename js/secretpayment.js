@@ -1,5 +1,6 @@
 import jQuery from 'jquery';
-import scriptjs from 'scriptjs';
+import CardValidator from 'card-validator';
+import InputMask from 'inputmask';
 
 import common from './common';
 import data from './data';
@@ -7,8 +8,17 @@ import api from './api';
 import state from './state';
 import start from './start';
 
-let paymentForm;
-let paymentStatus = {};
+function paymentEmptied() {
+    return {
+        ccNumber: false,
+        ccCode: false,
+        ccExpiration: false,
+        ccEmail: false,
+        ccPostalCode: false
+    };
+}
+
+let paymentStatus = paymentEmptied();
 
 function validCardInput() {
     let ret = false;
@@ -40,162 +50,140 @@ function showTab() {
     function validateEmail() {
         let email = jQuery("#ccEmail");
         if (!common.validateEmail(email.val(), false)) {
-            jQuery("#ccEmail").addClass("invalidInput");
+            email.addClass("invalidInput");
             paymentStatus["ccEmail"] = false;
         } else {
-            jQuery("#ccEmail").removeClass("invalidInput");
+            email.removeClass("invalidInput");
             paymentStatus["ccEmail"] = true;
         }
+
+        updateButtons(validCardInput());
+    }
+
+    function validateExpiration() {
+        let expiration = jQuery("#ccExpiration");
+        const result = CardValidator.expirationDate(expiration.val());
+        if (!result.isValid) {
+            expiration.addClass("invalidInput");
+            paymentStatus["ccExpiration"] = false;
+        } else {
+            expiration.removeClass("invalidInput");
+            paymentStatus["ccExpiration"] = true;
+        }
+
+        updateButtons(validCardInput());
+    }
+
+    function validatePostalCode() {
+        let postalCode = jQuery("#ccPostalCode");
+        const result = CardValidator.postalCode(postalCode.val());
+        if (!result.isValid) {
+            postalCode.addClass("invalidInput");
+            paymentStatus["ccPostalCode"] = false;
+        } else {
+            postalCode.removeClass("invalidInput");
+            paymentStatus["ccPostalCode"] = true;
+        }
+
+        updateButtons(validCardInput());
+    }
+
+    function validateCode() {
+        let code = jQuery("#ccCode");
+        if (code.val().length > 0) {
+            const number = jQuery("#ccNumber");
+            const cardResult = CardValidator.number(number.val());
+            let result;
+            if (cardResult.card && cardResult.card.code && cardResult.card.code.size) {
+                result = CardValidator.cvv(code.val(), cardResult.card.code.size);
+            } else {
+                result = CardValidator.cvv(code.val());
+            }
+            if (!result.isValid) {
+                code.addClass("invalidInput");
+                paymentStatus["ccCode"] = false;
+            } else {
+                code.removeClass("invalidInput");
+                paymentStatus["ccCode"] = true;
+            }
+
+            updateButtons(validCardInput());
+        }
+    }
+
+    function clearCardType() {
+        const elem = jQuery("#ccNumberLabel");
+        elem
+            .removeClass("american-express")
+            .removeClass("discover")
+            .removeClass("visa")
+            .removeClass("mastercard");
+    }
+
+    function validateNumber() {
+        const number = jQuery("#ccNumber");
+        const result = CardValidator.number(number.val());
+        paymentStatus["ccNumber"] = result.isValid;
+        if (!result.isValid) {
+            number.addClass("invalidInput");
+        } else {
+            number.removeClass("invalidInput");
+        }
+        clearCardType();
+
+        if (result.card) {
+            let mask = '';
+            for (let i = 0; i < result.card.lengths[0]; i++) {
+                if (result.card.gaps.filter(t => t == i).length > 0) {
+                    mask += " ";
+                }
+                mask += "9";
+            }
+            InputMask(mask, {
+                placeholder: '',
+                showMaskOnHover: false,
+                showMaskOnFocus: false,
+            }).mask(jQuery(this));
+
+            jQuery("#ccNumberLabel").addClass(result.card.type);
+
+            if (result.card.code) {
+                let mask = "";
+                let placeholder = result.card.code.name;
+                for (let i = 0; i < result.card.code.size; i++) {
+                    mask += "9";
+                }
+                InputMask(mask, {
+                    placeholder: '',
+                    showMaskOnHover: false,
+                    showMaskOnFocus: false,
+                }).mask(jQuery("#ccCode"));
+
+                jQuery("#ccCode").attr("placeholder", placeholder.trim());
+
+                validateCode();
+            }
+        }
+
         updateButtons(validCardInput());
     }
 
     function displayCardWithEmail(notificationEmail) {
-        common.showProcessing();
-        scriptjs('https://js.squareup.com/v2/paymentform', function() {
-            function createPaymentForm(address) {
-                const data = JSON.parse(address);
-
-                common.enableErrorHandling(false);
-                paymentForm = new SqPaymentForm({
-                    applicationId: data.applicationId,
-                    locationId: data.locationId,
-                    inputClass: 'form-control',
-                    cardNumber: {
-                        elementId: 'ccNumber',
-                        placeholder: '• • • •  • • • •  • • • •  • • • •'
-                    },
-                    cvv: {
-                        elementId: 'ccCode',
-                        placeholder: 'CVV'
-                    },
-                    expirationDate: {
-                        elementId: 'ccExpiration',
-                        placeholder: 'MM/YY'
-                    },
-                    postalCode: {
-                        elementId: 'ccPostalCode',
-                        placeholder: '12345'
-                    },
-                    callbacks: {
-                        cardNonceResponseReceived: function (err, nonce) {
-                            if (err) {
-                                common.hideProcessing();
-                                let str = 'Payment processing failed:\n';
-                                err.forEach(e => {
-                                    switch(e.field) {
-                                        case "cardNumber":
-                                            jQuery("#ccNumber").addClass("invalidInput");
-                                            break;
-                                        case "cvv":
-                                            jQuery("#ccCode").addClass("invalidInput");
-                                            break;
-                                        case "expirationDate":
-                                            jQuery("#ccExpiration").addClass("invalidInput");
-                                            break;
-                                        case "postalCode":
-                                            jQuery("#ccPostalCode").addClass("invalidInput");
-                                            break;
-                                    }
-                                    str += e.message + ":\n";
-                                });
-                                common.showError(str);
-
-                                updateButtons(true);
-                            } else {
-                                executePayment('USD', JSON.stringify({
-                                    nonce: nonce,
-                                    email: jQuery("#ccEmail").val()
-                                }));
-                            }
-                        },
-                        inputEventReceived: function(event) {
-                            if (event.eventType === "focusClassAdded") {
-                                const elem = jQuery("#" + event.elementId);
-                                if (event.currentState.isPotentiallyValid) {
-                                    elem.removeClass("invalidInput");
-                                } else {
-                                    elem.addClass("invalidInput");
-                                }
-                            } else if (event.eventType === "focusClassRemoved") {
-                                const elem = jQuery("#" + event.elementId);
-                                if (event.currentState.isCompletelyValid) {
-                                    elem.removeClass("invalidInput");
-                                } else {
-                                    elem.addClass("invalidInput");
-                                }
-                            } else if (event.eventType === "cardBrandChanged") {
-                                const elem = jQuery("#ccNumberLabel");
-                                elem
-                                    .removeClass("americanExpress")
-                                    .removeClass("discover")
-                                    .removeClass("visa")
-                                    .removeClass("masterCard");
-                                elem.addClass(event.cardBrand);
-                            }
-                            paymentStatus[event.field] = event.currentState.isCompletelyValid;
-
-                            updateButtons(validCardInput());
-                        },
-                        paymentFormLoaded: function () {
-                            jQuery("#paymentCardRow").slideDown();
-                            paymentForm.recalculateSize();
-                            common.hideProcessing();
-
-                            updateButtons(validCardInput());
-
-                            // This is to eat Square error.
-                            setTimeout(() => {
-                                common.enableErrorHandling(true);
-                            }, 10000);
-                        }
-                    }
-                });
-                paymentForm.build();
-            }
-
-            if (SqPaymentForm.isSupportedBrowser()) {
-                if (!paymentForm) {
-                    if (!state.paymentInformation()) {
-                        api.paymentInformation()
-                            .then((data) => createPaymentForm(data.USD.token));
-                    } else {
-                        createPaymentForm(state.paymentInformation()["USD"]["token"]);
-                    }
-                } else {
-                    jQuery("#paymentCardRow").slideDown();
-                    common.hideProcessing();
-                }
-
-                jQuery("#ccEmail").val(notificationEmail);
-
-                if (jQuery("#ccEmail").off().on('change paste keyup', validateEmail).val()) {
-                    validateEmail();
-                } else {
-                    paymentStatus["ccEmail"] = false;
-                }
-            } else {
-                common.showError("Unsupported browser for payments");
-            }
-        });
+        jQuery("#paymentCardRow").slideDown();
     }
 
     function displayCard() {
-        updateButtons(false);
+        updateButtons(validCardInput());
 
-        if (state.caretakers()) {
-            data.caretakerListFromMap(state.caretakers())
-                .then((caretakers) => {
-                    let notificationEmail;
-                    caretakers.forEach((caretaker) => {
-                        if (caretaker.notification && !caretaker.encrypted) {
-                            notificationEmail = caretaker.address;
-                        }
-                    });
-                    displayCardWithEmail(notificationEmail);
-                });
-        } else {
-            displayCardWithEmail();
-        }
+        displayCardWithEmail();
+    }
+
+    function clearInput() {
+        jQuery("#ccCode,#ccEmail,#ccPostalCode,#ccExpiration,#ccNumber,#couponCode,#paymentTransaction").val("");
+
+        clearCardType();
+
+        paymentStatus = paymentEmptied();
     }
 
     function executePayment(type, token) {
@@ -206,6 +194,7 @@ function showTab() {
         if (state.secretId()) {
             api.updateSecret(state.secretId(), secret)
                 .then(() => {
+                    clearInput();
                     updateButtons(true);
                     const estimateDate = Math.max(Date.now(), state.secret().payDate);
                     state.secret().payDate = estimateDate + 366 * 24 * 60 * 60 * 1000;
@@ -217,6 +206,7 @@ function showTab() {
         } else {
             api.createSecret(secret)
                 .then((secretId) => {
+                    clearInput();
                     state.secret().changed = false;
                     state.secretId(secretId);
 
@@ -234,6 +224,7 @@ function showTab() {
                 })
                 .then(() => {
                     updateButtons(true);
+                    common.hideProcessing();
                 });
         }
     }
@@ -303,8 +294,14 @@ function showTab() {
         updateButtons(false);
         const type = selectedPaymentType();
         if (type === 'USD') {
-            jQuery(".ccField").removeClass("invalidInput");
-            paymentForm.requestCardNonce();
+            const token = JSON.stringify({
+                email: jQuery("#ccEmail").val().trim(),
+                number: jQuery("#ccNumber").val().replace(/\s+/g,""),
+                exp: jQuery("#ccExpiration").val().trim(),
+                code: jQuery("#ccCode").val().trim(),
+                zip: jQuery("#ccPostalCode").val().trim(),
+            });
+            executePayment(type, token);
         }
         else if (type == 'CPN') {
             executePayment(type, couponCode.val().trim());
@@ -313,6 +310,41 @@ function showTab() {
         }
     });
 
+    jQuery("#ccEmail").off().on('change paste keyup', validateEmail);
+    jQuery("#ccNumber").off().on('change paste keyup', validateNumber);
+    jQuery("#ccExpiration").off().on('change paste keyup', validateExpiration);
+    jQuery("#ccCode").off().on('change paste keyup', validateCode);
+    jQuery("#ccPostalCode").off().on('change paste keyup', validatePostalCode);
+
+    InputMask("9999 9999 9999 9999", {
+        placeholder: '',
+        showMaskOnHover: false,
+        showMaskOnFocus: false,
+    }).mask(jQuery("#ccNumber"));
+
+    InputMask("99/99", {
+        placeholder: '',
+        showMaskOnHover: false,
+        showMaskOnFocus: false,
+    }).mask(jQuery("#ccExpiration"));
+
+    InputMask("9999", {
+        placeholder: '',
+        showMaskOnHover: false,
+        showMaskOnFocus: false,
+    }).mask(jQuery("#ccCode"));
+
+    if (state.caretakers()) {
+        data.caretakerListFromMap(state.caretakers())
+            .then((caretakers) => {
+                caretakers.forEach((caretaker) => {
+                    if (caretaker.notification && !caretaker.encrypted) {
+                        jQuery("#ccEmail").val(caretaker.address);
+                        validateEmail();
+                    }
+                });
+            });
+    }
 }
 
 export default showTab

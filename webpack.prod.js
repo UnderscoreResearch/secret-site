@@ -29,5 +29,10 @@ module.exports = {
         path: path.resolve(__dirname, "dist"),
         filename: "[name].js",
         chunkFilename: '[name].js'
+    },
+    resolve: {
+        alias: {
+            "./dependencyLibs/inputmask.dependencyLib": "./dependencyLibs/inputmask.dependencyLib.jquery"
+        }
     }
 };

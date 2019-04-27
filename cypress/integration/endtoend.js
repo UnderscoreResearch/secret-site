@@ -227,45 +227,11 @@ describe('End to end', function() {
         cy.get("#ccEmail")
             .should('have.value', 'test@yoursharedsecret.com');
 
-        cy.get('#ccNumber').then(iframe => {
-            const doc = iframe.contents();
-
-            let input = doc.find("input")[0];
-            cy
-                .wrap(input)
-                .focus()
-                .type('4111111111111111');
-        });
-
-        cy.get('#ccExpiration').then(iframe => {
-            const doc = iframe.contents();
-
-            let input = doc.find("input")[0];
-            cy
-                .wrap(input)
-                .focus()
-                .type('1221');
-        });
-
-        cy.get('#ccCode').then(iframe => {
-            const doc = iframe.contents();
-
-            let input = doc.find("input")[0];
-            cy
-                .wrap(input)
-                .focus()
-                .type('111');
-        });
-
-        cy.get('#ccPostalCode').then(iframe => {
-            const doc = iframe.contents();
-
-            let input = doc.find("input")[0];
-            cy
-                .wrap(input)
-                .focus()
-                .type('12345');
-        });
+        cy.wait(500);
+        cy.get('#ccNumber').type("4111111111111111");
+        cy.get('#ccExpiration').type("1234");
+        cy.get('#ccCode').type("123");
+        cy.get('#ccPostalCode').type("46217");
 
         cy.wait(500);
         cy.get("#secretPaymentNext").click();
