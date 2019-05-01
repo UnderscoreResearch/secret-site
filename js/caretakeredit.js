@@ -43,7 +43,7 @@ function loadModules() {
 function updateButtons() {
     window.onbeforeunload = function (e)
     {
-        if (state.caretaker().changed && state.caretaker().publicKey) {
+        if ((state.caretaker().changed || state.unvalidatedKey() )&& state.caretaker().publicKey) {
             return 'You have unsaved changes. Are you sure you want to navigate off the page?';
         }
         return null;
@@ -312,6 +312,7 @@ function nextClick() {
                 state.caretaker().changed = false;
                 updateButtons();
                 if (showKey) {
+                    state.unvalidatedKey(true);
                     start.displayTab("key");
                 }
             })

@@ -1,14 +1,56 @@
 ﻿import jQuery from 'jquery';
 import qrcode from 'qrcode';
-
 import common from './common';
+import camera from './camera';
 import state from './state';
 import start from './start';
+
+function goBack() {
+    jQuery("#validateKeyModal").modal("hide");
+
+    if (state.caretakerId()) {
+        start.displayTab("caretaker-edit");
+    } else {
+        start.displayTab("secret-edit");
+    }
+}
+
+function validateKey(validatedKey) {
+    jQuery("#validateKeyModal").off().on('hidden.bs.modal', function () {
+        camera.stopScanner();
+        jQuery("#keyUrlContainer,#keyQrcode").fadeTo("slow", 1);
+        jQuery("#keyUrlContainer,#keyQrcode").css({
+            visibility: "visible"
+        });
+    });
+
+    jQuery("#validateKeyConfirm").off().click(function () {
+        const enteredKey = jQuery("#validatePrivateKey").val().trim();
+        if (validatedKey === enteredKey) {
+            state.unvalidatedKey(false);
+            goBack();
+        } else {
+            common.showError("Key did not match");
+        }
+    });
+
+    camera.connectCamera("#validate-camera-overlay", "#validate-qrscan", function (content) {
+        if (validatedKey == content) {
+            state.unvalidatedKey(false);
+            goBack();
+        } else {
+            common.showError("Incorrect key scanned");
+        }
+    });
+
+    jQuery("#validateKeyModal").modal('show');
+    jQuery("#keyUrlContainer,#keyQrcode").fadeTo("slow", 0);
+}
 
 function showTab() {
     const key = state.createKey();
 
-    const siteUrl = state.siteLink();
+    const siteUrl = state.siteLink() + "#s";
 
     jQuery("#keySiteLink").text(siteUrl).attr("href", siteUrl);
 
@@ -44,10 +86,10 @@ function showTab() {
     }
 
     jQuery("#secretKeyBack").off().click(function() {
-        if (state.caretakerId()) {
-            start.displayTab("caretaker-edit");
+        if (state.unvalidatedKey()) {
+            validateKey(state.createKey());
         } else {
-            start.displayTab("secret-edit");
+            goBack();
         }
     });
 }

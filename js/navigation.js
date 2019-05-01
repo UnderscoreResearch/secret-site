@@ -2,6 +2,7 @@ import jQuery from "jquery";
 
 import start from './start';
 import state from './state';
+import camera from './camera';
 import common from './common';
 import dev from './dev';
 
@@ -104,7 +105,7 @@ let page = "loading";
     }
 
     function showPage(target, animate) {
-        start.stopScanner();
+        camera.stopScanner();
         jQuery(".nav-link").removeClass("active");
         if (target) {
             jQuery("." + target).addClass("active");

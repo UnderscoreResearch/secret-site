@@ -252,6 +252,13 @@ describe('End to end', function() {
 
             cy.wait(500);
             cy.get("#secretKeyBack").click();
+
+            cy.get("#validateKeyConfirm").click();
+            cy.wait(500);
+
+            cy.get("#validatePrivateKey").type(secretKey);
+            cy.get("#validateKeyConfirm").click();
+
             cy.get("#sendMessageBtn", {
                 timeout: 5000
             }).click();
@@ -296,8 +303,17 @@ describe('End to end', function() {
                     timeout: 8000
                 }).should('be.visible').then(elem => {
                     caretakerKeys.push(elem.text());
+
+                    cy.get("#secretKeyBack").click();
+
+                    cy.get("#validateKeyConfirm").click();
+                    cy.wait(500);
+
+                    cy.get("#validatePrivateKey").type(elem.text());
+
+                    cy.get("#validateKeyConfirm").click();
                 });
-                cy.get("#secretKeyBack").click();
+
                 cy.get("#caretakerNext").should("have.text", "Update");
                 cy.get("#caretakerNext").should("not.be.enabled");
                 cy.wait(500);

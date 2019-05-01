@@ -13,11 +13,14 @@ let secretPublicKey;
 let caretakers;
 let title;
 let paymentInformation;
+let unvalidatedKey;
 
 export function parseLink(location) {
     const parsingRe = /(?:#|^)s=([^\/]+)(?:\/p=([^\/]+))?(?:\/c=([^\/]+))?(?:\/a=([^\/]+))?(?:\/d=([^\/]+))?(?:\/u=([^\/]+))?(?:\/t=([^\/]+))?$/;
 
     secret = null;
+
+    unvalidatedKey = false;
 
     if (location) {
         const result = location.match(parsingRe);
@@ -176,7 +179,15 @@ export default {
     parseLink: parseLink,
     createLink: createLink,
     createKey: createKey,
-    siteLink: siteLink
+    siteLink: siteLink,
+    unvalidatedKey: function (v) {
+        if (typeof v !== 'undefined') {
+            unvalidatedKey = v;
+        } else {
+            return unvalidatedKey;
+        }
+    }
+
 };
 
 if (window.location.hash) {

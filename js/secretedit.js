@@ -327,7 +327,7 @@ function deleteSecret() {
 function showTab() {
     window.onbeforeunload = function (e)
     {
-        if (anyChange()) {
+        if (anyChange() || state.unvalidatedKey()) {
             return 'You have unsaved changes. Are you sure you want to navigate off the page?';
         }
         return null;

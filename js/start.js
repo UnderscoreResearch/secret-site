@@ -3,24 +3,13 @@ import nacl from 'tweetnacl';
 
 import state from './state';
 import data from './data';
+import camera from './camera';
 import secretEdit from './secretedit';
 import secretPayment from './secretpayment';
 import key from './key';
 import caretakerEdit from './caretakeredit';
 import common from './common';
 import api from './api';
-
-let scanner;
-let cameras;
-let cameraIndex;
-
-function stopScanner() {
-    if (scanner) {
-        scanner.stop();
-        jQuery("#camera-overlay").html('<i class="fas fa-camera"></i>');
-        cameraIndex = -1;
-    }
-}
 
 function displayTab(tab, noanimation) {
     common.hideError();
@@ -52,7 +41,7 @@ function displayTab(tab, noanimation) {
             jQuery(".hiddentab").slideUp();
         }
     } else {
-        stopScanner();
+        camera.stopScanner();
         if (noanimation) {
             jQuery("#secret-start-tab").hide();
             jQuery(".hiddentab:not(#" + tab + "-tab)").hide();
@@ -148,51 +137,10 @@ function displayStateTab(noanimation) {
 function showPage() {
     "use strict"; // Start of use strict
 
-    jQuery("#camera-overlay").off().click(function() {
-        import(/* webpackChunkName: "scan" */ 'instascan').then(instascan => {
-            if (scanner) {
-                if (cameras) {
-                    cameraIndex++;
-                    if (cameraIndex >= cameras.length) {
-                        jQuery("#camera-overlay").html('<i class="fas fa-camera"></i>');
-                        cameraIndex = -1;
-                        scanner.stop();
-                    } else {
-                        if (cameraIndex + 1 >= cameras.length) {
-                            jQuery("#camera-overlay").html('<i class="fas fa-ban"></i>');
-                        } else {
-                            jQuery("#camera-overlay").html('<i class= "fas fa-sync-alt"/><i class="fas fa-camera"></i>');
-                        }
-                        scanner.start(cameras[cameraIndex]);
-                    }
-                }
-            } else {
-                scanner = new instascan.Scanner({ video: document.getElementById('qrscan') });
-                scanner.addListener('scan',
-                    function (content) {
-                        console.log("Parsed link " + content);
-                        if (state.parseLink(content)) {
-                            displayStateTab();
-                        }
-                    });
-                instascan.Camera.getCameras().then(function(c) {
-                    if (c.length > 0) {
-                        if (c.length > 1) {
-                            jQuery("#camera-overlay").html('<i class= "fas fa-sync-alt"/><i class="fas fa-camera"></i>');
-                        } else {
-                            jQuery("#camera-overlay").html('<i class="fas fa-ban"></i>');
-                        }
-                        cameras = c;
-                        cameraIndex = 0;
-                        scanner.start(cameras[cameraIndex]);
-                    } else {
-                        console.error('No cameras found.');
-                    }
-                }).catch(function(e) {
-                    console.error(e);
-                });
-            }
-        }).catch(() => common.showError('An error occurred while loading the component'));
+    camera.connectCamera("#camera-overlay", "#qrscan",function (content) {
+        if (state.parseLink(content)) {
+            displayStateTab();
+        }
     });
 
     jQuery("#showKeyButton").off().click(function() {
@@ -221,7 +169,6 @@ function showPage() {
 }
 
 export default {
-    stopScanner: stopScanner,
     displayTab: displayTab,
     showPage: showPage
 }

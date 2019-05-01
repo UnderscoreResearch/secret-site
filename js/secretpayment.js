@@ -213,6 +213,7 @@ function showTab() {
                     return api.saveCaretakers(secretId, state.caretakers())
                         .then((data) => {
                             state.caretakers(data);
+                            state.unvalidatedKey(true);
                             start.displayTab("key");
                         })
                         .catch((err) => {
@@ -267,23 +268,6 @@ function showTab() {
 
     paymentTransaction.off().on('change paste keyup', validateBlockchainInput);
     couponCode.off().on('change paste keyup', validateCouponInput);
-
-    if (selectedPaymentType() === 'USD') {
-        jQuery("#paymentTransactionRow").hide();
-        jQuery("#paymentCouponRow").hide();
-        jQuery("#paymentCardRow").show();
-    }
-    else {
-        if (selectedPaymentType() === 'CPN') {
-            jQuery("#paymentCouponRow").show();
-            jQuery("#paymentTransactionRow").hide();
-        } else {
-            jQuery("#paymentCouponRow").hide();
-            jQuery("#paymentTransactionRow").show();
-        }
-        jQuery("#paymentCardRow").hide();
-        validateBlockchainInput();
-    }
 
     jQuery("#secretPaymentBack").off().click(function() {
         start.displayTab("secret-edit");
@@ -344,6 +328,26 @@ function showTab() {
                     }
                 });
             });
+    }
+
+
+    if (selectedPaymentType() === 'USD') {
+        jQuery("#paymentTransactionRow").hide();
+        jQuery("#paymentCouponRow").hide();
+        jQuery("#paymentCardRow").show();
+
+        updateButtons(validCardInput());
+    }
+    else {
+        if (selectedPaymentType() === 'CPN') {
+            jQuery("#paymentCouponRow").show();
+            jQuery("#paymentTransactionRow").hide();
+        } else {
+            jQuery("#paymentCouponRow").hide();
+            jQuery("#paymentTransactionRow").show();
+        }
+        jQuery("#paymentCardRow").hide();
+        validateBlockchainInput();
     }
 }
 
