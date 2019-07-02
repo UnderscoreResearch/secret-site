@@ -15,7 +15,7 @@ let page = "loading";
     var ua = window.navigator.userAgent;
     if (ua.indexOf('MSIE ') > 0 || ua.indexOf('Trident/') > 0) {
         jQuery("#loadingButton").hide();
-        jQuery("#incompatibleText").replaceWith(jQuery("#incompatibleText").html());
+        jQuery("#incompatibleText").replaceWith(jQuery("#incompatibleText").text());
         return;
     }
 
