@@ -49,7 +49,7 @@
     "gulp-sass": "4.0.2",
     "start-server-and-test": "^1.10.0",
     "webpack": "4.39.1",
-    "webpack-cli": "^3.3.6",
+    "webpack-cli": "^3.3.12",
     "webpack-stream": "5.2.1"
   },
   "scripts": {
